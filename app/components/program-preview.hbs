@@ -1,3 +1,5 @@
-{{#each @program.instructions as |instruction|}}
-  <InstructionPreview @instruction={{instruction}} />
-{{/each}}
+<div class="p-4 bg-slate-50 border-2 border-slate-200">
+  {{#each @program.instructions as |instruction|}}
+    <InstructionPreview @instruction={{instruction}} />
+  {{/each}}
+</div>

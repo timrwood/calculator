@@ -1,3 +1,5 @@
-{{#each this.evaluations as |evaluation|}}
-  <EvaluationPreview @evaluation={{evaluation}} />
-{{/each}}
+<div class="p-4 bg-slate-50 border-2 border-slate-200">
+  {{#each this.evaluations as |evaluation|}}
+    <EvaluationPreview @evaluation={{evaluation}} />
+  {{/each}}
+</div>

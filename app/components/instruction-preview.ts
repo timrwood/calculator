@@ -52,7 +52,7 @@ export default class InstructionPreview extends Component<InstructionPreviewSign
   }
 
   withIndentation(command: string, indentation: number): string {
-    return '- '.repeat(indentation * 2) + command
+    return ' '.repeat(indentation * 4) + command
   }
 
   defaultExpressionCommand(expression: Expression): string {

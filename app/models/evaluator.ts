@@ -25,6 +25,7 @@ export type Evaluation = {
   op: Op
   as: As
   is: Is
+  re: Registry
 }
 
 type Registry = {
@@ -93,12 +94,14 @@ export default class Evaluator {
   }
 
   evaluateSetInstruction(instruction: SetInstruction) {
-    const as = `n:${instruction[0]}`
+    const as = `n:${instruction[1]}`
     const is = this.evaluateExpression(instruction[2])
     const op: Op = ['set', as, is]
 
     this.registry[as] = is
-    this.evaluations.push({ op, as, is })
+    const re = { ...this.registry }
+
+    this.evaluations.push({ op, as, is, re })
   }
 
   evaluateExpression(expression: Expression): number {
