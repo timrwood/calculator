@@ -1,14 +1,15 @@
 import Route from '@ember/routing/route'
 import Program from '../models/program'
+import Evaluator from '../models/evaluator'
 
 export default class IndexRoute extends Route {
   model() {
-    return new Program([
+    const program = new Program([
       ['set', 'x', 12],
       ['set', 'y', 34],
       [
         'while',
-        ['!=', 'carry', 0],
+        ['!=', 'x', 0],
         [
           ['set', 'carry', ['&', 'x', 'y']],
           ['set', 'y', ['^', 'y', 'x']],
@@ -17,5 +18,8 @@ export default class IndexRoute extends Route {
       ],
       ['return', 'y'],
     ])
+    const evaluator = new Evaluator(program)
+
+    return { program, evaluator }
   }
 }
