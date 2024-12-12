@@ -1,9 +1,9 @@
 import Component from '@glimmer/component'
-import type { Is } from '../models/evaluator'
+import type { Value } from '../models/evaluator'
 
 export interface IntegerBitsSignature {
   Args: {
-    number: Is
+    number: Value
   }
   Blocks: {
     default: []

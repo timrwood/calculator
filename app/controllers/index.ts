@@ -1,6 +1,6 @@
 import Controller from '@ember/controller'
 import { action } from '@ember/object'
-import Program from '../models/program'
+import type { Program } from '../models/program'
 import Evaluator from '../models/evaluator'
 import { tracked } from '@glimmer/tracking'
 
@@ -11,51 +11,55 @@ export default class IndexController extends Controller {
   @tracked y = undefined
 
   get program(): Program {
+    return this.subtractProgram
+  }
+
+  get args(): number[] {
     const x = ~~(this.x ?? 0)
     const y = ~~(this.y ?? 0)
-    return this.subtractProgram(x, y)
+    return [x, y]
   }
 
-  addProgram(x: number, y: number): Program {
-    return new Program([
-      ['set', 'x', x],
-      ['set', 'y', y],
+  get addProgram(): Program {
+    return [
+      ['x', 'args', 0],
+      ['y', 'args', 1],
       [
+        'x',
         'while',
-        ['!=', 'x', 0],
         [
-          ['set', 't', ['&', 'x', 'y']],
-          ['set', 'y', ['^', 'x', 'y']],
-          ['set', 'x', ['<<', 't', 1]],
+          ['t', '&', 'x', 'y'],
+          ['y', '^', 'x', 'y'],
+          ['x', '<<', 't', 1],
         ],
       ],
-      ['return', 'y'],
-    ])
+      ['y', 'return'],
+    ]
   }
 
-  subtractProgram(x: number, y: number): Program {
-    return new Program([
-      ['set', 'x', x],
-      ['set', 'y', y],
+  get subtractProgram(): Program {
+    return [
+      ['x', 'args', 0],
+      ['y', 'args', 1],
       [
+        'y',
         'while',
-        ['!=', 'y', 0],
         [
-          ['set', 't', ['~', 'x']],
-          ['set', 't', ['&', 't', 'y']],
-          ['set', 'x', ['^', 'x', 'y']],
-          ['set', 'y', ['<<', 't', 1]],
+          ['t', '~', 'x'],
+          ['t', '&', 't', 'y'],
+          ['x', '^', 'x', 'y'],
+          ['y', '<<', 't', 1],
         ],
       ],
-      ['return', 'x'],
-    ])
+      ['x', 'return'],
+    ]
   }
 
   get evaluator(): Evaluator {
-    return new Evaluator(this.program)
+    return new Evaluator(this.program, this.args)
   }
 
-  @action setX(event: InputEvent) {
+  @action setX(event: Event) {
     this.x = ~~event.target.value
   }
 

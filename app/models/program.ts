@@ -1,30 +1,38 @@
-export type LiteralExpression = number
+export type Literal = number
 
-export type AndInstruction = ['&', string, string]
-export type NotEqualInstruction = ['!=', string, Expression]
-export type ReturnInstruction = ['return', string]
-export type SetInstruction = ['set', string, Expression]
-export type ShiftLeftInstruction = ['<<', string, number]
-export type WhileInstruction = ['while', Instruction, Instruction[]]
-export type XorInstruction = ['^', string, string]
-export type NotInstruction = ['~', string]
+export type Reference = string
+
+export type ArgsInstruction = [Reference, 'args', Literal]
+export type BitwiseAndInstruction = [Reference, '&', Reference, Reference]
+export type BitwiseNotInstruction = [Reference, '~', Reference]
+export type BitwiseShiftLeftInstruction = [Reference, '<<', Reference, Literal]
+export type BitwiseXorInstruction = [Reference, '^', Reference, Reference]
+export type ReturnInstruction = [Reference, 'return']
+export type WhileInstruction = [Reference, 'while', Instruction[]]
 
 export type Instruction =
-  | SetInstruction
-  | WhileInstruction
+  | ArgsInstruction
+  | BitwiseAndInstruction
+  | BitwiseNotInstruction
+  | BitwiseShiftLeftInstruction
+  | BitwiseXorInstruction
   | ReturnInstruction
-  | NotEqualInstruction
-  | AndInstruction
-  | XorInstruction
-  | ShiftLeftInstruction
-  | NotInstruction
+  | WhileInstruction
 
-export type Expression = LiteralExpression | Instruction
+export type Program = Instruction[]
 
-export default class Program {
-  instructions: Instruction[]
-
-  constructor(instructions: Instruction[]) {
-    this.instructions = instructions
-  }
-}
+const test: Program = [
+  ['x', 'args', 0],
+  ['y', 'args', 1],
+  [
+    'x',
+    'while',
+    [
+      ['t', '~', 'x'],
+      ['t', '&', 't', 'y'],
+      ['x', '^', 'x', 'y'],
+      ['y', '<<', 't', 1],
+    ],
+  ],
+  ['y', 'return'],
+]

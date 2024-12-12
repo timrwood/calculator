@@ -1,5 +1,5 @@
 import Component from '@glimmer/component'
-import type { Instruction, WhileInstruction, SetInstruction, Expression } from '../models/program'
+import type { Instruction } from '../models/program'
 
 export interface InstructionPreviewSignature {
   Args: {
@@ -13,53 +13,39 @@ export interface InstructionPreviewSignature {
 
 export default class InstructionPreview extends Component<InstructionPreviewSignature> {
   get operation(): string {
-    return this.args.instruction[0]
+    return this.args.instruction[1]
   }
 
   get commands(): string[] {
-    return this.instructionCommands(this.args.instruction, 0)
+    return this.command(this.args.instruction, 0)
   }
 
-  instructionCommands(instruction: Instruction, indentation: number): string[] {
-    switch (instruction[0]) {
-      case 'set':
-        return this.setInstructionCommands(instruction as SetInstruction, indentation)
-      case 'while':
-        return this.whileInstructionCommands(instruction as WhileInstruction, indentation)
-      default:
-        return this.defaultInstructionCommands(instruction, indentation)
-    }
-  }
-
-  setInstructionCommands(instruction: SetInstruction, indentation: number): string[] {
-    const [operation, variable, expression] = instruction
-
-    return [
-      this.withIndentation(`(${operation} ${variable} ${this.defaultExpressionCommand(expression)})`, indentation),
-    ]
-  }
-
-  whileInstructionCommands(instruction: WhileInstruction, indentation: number): string[] {
-    const condition = instruction[1]
-    const body = instruction[2]
-    return [`(while ${this.defaultExpressionCommand(condition)} (`]
-      .concat(body.flatMap((instruction) => this.instructionCommands(instruction, indentation + 1)))
-      .concat(')')
-  }
-
-  defaultInstructionCommands(instruction: Instruction, indentation: number): string[] {
-    return [this.withIndentation(this.defaultExpressionCommand(instruction), indentation)]
-  }
-
-  withIndentation(command: string, indentation: number): string {
-    return ' '.repeat(indentation * 4) + command
-  }
-
-  defaultExpressionCommand(expression: Expression): string {
-    if (typeof expression === 'number') {
-      return expression.toString()
+  command(instruction: Instruction, indentation: number): string[] {
+    if (instruction.at(-1) instanceof Array) {
+      return this.commandWithBody(instruction, indentation)
     } else {
-      return `(${expression.join(' ')})`
+      return [this.commandWithoutBody(instruction, indentation)]
     }
+  }
+
+  indent(command: string, indentation: number): string {
+    return `${' '.repeat(indentation * 4)} ${command}`
+  }
+
+  commandWithBody(instruction: Instruction, indentation: number): string[] {
+    const output = []
+    output.push(this.indent(`(${instruction.slice(0, -1).join(' ')}`, indentation))
+
+    const body = instruction.at(-1) as Instruction[]
+    body.forEach((instruction) => {
+      output.push(this.command(instruction, indentation + 1))
+    })
+
+    output.push(this.indent(')', indentation))
+    return output
+  }
+
+  commandWithoutBody(instruction: Instruction, indentation: number): string {
+    return this.indent(`(${instruction.join(' ')})`, indentation)
   }
 }

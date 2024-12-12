@@ -1,5 +1,5 @@
 import Component from '@glimmer/component'
-import Program from '../models/program'
+import type { Program } from '../models/program'
 
 export interface ProgramPreviewSignature {
   Args: {

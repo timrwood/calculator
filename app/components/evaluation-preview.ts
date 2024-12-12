@@ -25,16 +25,17 @@ export default class EvaluationPreview extends Component<EvaluationPreviewSignat
 
   get firstArg() {
     const evaluation = this.args.evaluation
-    switch (evaluation.op[0]) {
+    switch (evaluation.op[1]) {
+      case '~':
       case '&':
       case '^':
       case '<<':
-        return evaluation.re[evaluation.op[1]]
+        return evaluation.re[evaluation.op[2]]
     }
   }
 
   get firstArgPrefix() {
-    const op = this.args.evaluation.op[0]
+    const op = this.args.evaluation.op[1]
     switch (op) {
       case '<<':
         return op
@@ -43,15 +44,15 @@ export default class EvaluationPreview extends Component<EvaluationPreviewSignat
 
   get secondArg() {
     const evaluation = this.args.evaluation
-    switch (evaluation.op[0]) {
+    switch (evaluation.op[1]) {
       case '&':
       case '^':
-        return evaluation.re[evaluation.op[2]]
+        return evaluation.re[evaluation.op[3]]
     }
   }
 
   get secondArgPrefix() {
-    const op = this.args.evaluation.op[0]
+    const op = this.args.evaluation.op[1]
     switch (op) {
       case '&':
       case '^':
