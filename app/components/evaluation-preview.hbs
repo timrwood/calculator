@@ -2,12 +2,24 @@
   <div class="w-1/4">
     ({{join ' ' @evaluation.op}})
   </div>
+
   <div class="w-1/4">
     <span class="text-red-600">{{@evaluation.as}}</span>
     <span class="text-slate-400">=</span>
     <span class={{this.isClassName}}>{{@evaluation.is}}</span>
   </div>
-  <div class="w-1/2">
+
+  <div class="w-1/4">
+    {{#each-in @evaluation.re as |key value|}}
+      <div class="w-1/4">
+        <span class="text-red-600">{{key}}</span>
+        <span class="text-slate-400">=</span>
+        <span class={{this.isClassName}}>{{value}}</span>
+      </div>
+    {{/each-in}}
+  </div>
+
+  <div class="w-1/4">
     {{#if this.firstArg}}
       <IntegerBits @number={{this.firstArg}} @prefix={{this.firstArgPrefix}} @onColor="text-slate-600" @offColor="text-slate-300" />
     {{/if}}

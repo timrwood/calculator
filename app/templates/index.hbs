@@ -1,4 +1,8 @@
 <div class="p-4 space-y-4">
-  <ProgramPreview @program={{@model.program}} />
-  <EvaluatorPreview @evaluator={{@model.evaluator}} />
+  <div class="flex">
+    <Input class="border-2" @value={{this.x}} {{on "input" this.setX}} />
+    <Input class="border-2" @value={{this.y}} {{on "input" this.setY}} />
+  </div>
+  <ProgramPreview @program={{this.program}} />
+  <EvaluatorPreview @evaluator={{this.evaluator}} />
 </div>

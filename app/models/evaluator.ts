@@ -8,6 +8,7 @@ import type {
   AndInstruction,
   ReturnInstruction,
   ShiftLeftInstruction,
+  NotInstruction,
   Expression,
 } from './program'
 
@@ -18,6 +19,7 @@ export type Op =
   | ['set', string, any]
   | ['!=', string, Is]
   | ['while', string]
+  | ['~', string]
   | ['&', string, string]
   | ['^', string, string]
   | ['<<', string, number]
@@ -114,6 +116,8 @@ export default class Evaluator {
         return this.evaluateNotEqualInstruction(instruction as NotEqualInstruction, intoRegister)
       case '&':
         return this.evaluateAndInstruction(instruction as AndInstruction, intoRegister)
+      case '~':
+        return this.evaluateNotInstruction(instruction as NotInstruction, intoRegister)
       case '^':
         return this.evaluateXorInstruction(instruction as XorInstruction, intoRegister)
       case '<<':
@@ -143,7 +147,7 @@ export default class Evaluator {
 
   evaluateWhileInstruction(instruction: WhileInstruction) {
     const [_command, condition, body] = instruction
-    let maxIterations = 10000
+    let maxIterations = 32
     const conditionRegister = this.nextAutoRegister()
 
     const bodyWithRegisters = body.map((instruction) => {
@@ -167,7 +171,7 @@ export default class Evaluator {
     const [_command, variable, expression] = instruction
     const expected = this.evaluateExpression(expression, intoRegister)
     const actual = this.registry[variable]
-    const op: Op = ['!=', variable, 1 || expected]
+    const op: Op = ['!=', variable, expected]
     const as = intoRegister
     const is = actual !== expected
 
@@ -175,6 +179,20 @@ export default class Evaluator {
       console.error('register is null, skipping operation')
     } else {
       this.pushEvaluation(op, as, is)
+    }
+  }
+
+  evaluateNotInstruction(instruction: NotInstruction, intoRegister: string | null) {
+    const [_command, variable] = instruction
+    const is = this.registry[variable]
+    const op: Op = ['~', variable]
+
+    if (typeof is !== 'number') {
+      console.error('expected number, got:', is)
+    } else if (intoRegister === null) {
+      console.error('register is null, skipping operation')
+    } else {
+      this.pushEvaluation(op, intoRegister, ~is)
     }
   }
 
