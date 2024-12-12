@@ -3,23 +3,25 @@ import type {
   Instruction,
   SetInstruction,
   WhileInstruction,
+  NotEqualInstruction,
   XorInstruction,
   AndInstruction,
+  ReturnInstruction,
   ShiftLeftInstruction,
   Expression,
 } from './program'
 
+type As = string
+type Is = number | boolean | undefined
+
 type Op =
-  | ['set', string, number]
-  | ['!=', string, number]
-  | ['while']
+  | ['set']
+  | ['!=', string, Is]
+  | ['while', string]
   | ['&', string, string]
   | ['^', string, string]
   | ['<<', string, number]
   | ['return', string]
-
-type As = string
-type Is = number | boolean
 
 export type Evaluation = {
   op: Op
@@ -79,6 +81,16 @@ export default class Evaluator {
     this.evaluations = []
   }
 
+  nextAutoRegister(): string {
+    return `:${this.index++}`
+  }
+
+  pushEvaluation(op: Op, as: As, is: Is) {
+    this.registry[as] = is
+    const re = { ...this.registry }
+    this.evaluations.push({ op, as, is, re })
+  }
+
   evaluate() {
     this.reset()
 
@@ -87,38 +99,143 @@ export default class Evaluator {
 
   evaluateInstruction(instruction: Instruction) {
     switch (instruction[0]) {
-      case 'set':
-        return this.evaluateSetInstruction(instruction as SetInstruction)
+      case 'while':
+        return this.evaluateWhileInstruction(instruction as WhileInstruction)
       default:
+        return this.evaluateInstructionIntoRegister(instruction, null)
     }
   }
 
-  evaluateSetInstruction(instruction: SetInstruction) {
-    const as = `n:${instruction[1]}`
-    const is = this.evaluateExpression(instruction[2])
-    const op: Op = ['set', as, is]
-
-    this.registry[as] = is
-    const re = { ...this.registry }
-
-    this.evaluations.push({ op, as, is, re })
+  evaluateInstructionIntoRegister(instruction: Instruction, intoRegister: string | null) {
+    switch (instruction[0]) {
+      case 'set':
+        return this.evaluateSetInstruction(instruction as SetInstruction, intoRegister)
+      case '!=':
+        return this.evaluateNotEqualInstruction(instruction as NotEqualInstruction, intoRegister)
+      case '&':
+        return this.evaluateAndInstruction(instruction as AndInstruction, intoRegister)
+      case '^':
+        return this.evaluateXorInstruction(instruction as XorInstruction, intoRegister)
+      case '<<':
+        return this.evaluateShiftLeftInstruction(instruction as ShiftLeftInstruction, intoRegister)
+      case 'return':
+        return this.evaluateReturnInstruction(instruction as ReturnInstruction, intoRegister)
+      default:
+        return
+    }
   }
 
-  evaluateExpression(expression: Expression): number {
+  evaluateReturnInstruction(instruction: ReturnInstruction, intoRegister: string | null) {
+    const as = instruction[1]
+    const is = this.registry[as]
+    const op: Op = ['return', as]
+
+    this.pushEvaluation(op, as, is)
+  }
+
+  evaluateSetInstruction(instruction: SetInstruction, intoRegister: string | null) {
+    const as = instruction[1]
+    const is = this.evaluateExpression(instruction[2], intoRegister)
+    const op: Op = ['set']
+
+    this.pushEvaluation(op, as, is)
+  }
+
+  evaluateWhileInstruction(instruction: WhileInstruction) {
+    const [_command, condition, body] = instruction
+    let maxIterations = 10000
+    const conditionRegister = this.nextAutoRegister()
+
+    const bodyWithRegisters = body.map((instruction) => {
+      const bodyRegister = this.nextAutoRegister()
+      return { instruction, bodyRegister }
+    })
+
+    while (maxIterations--) {
+      this.evaluateInstructionIntoRegister(condition, conditionRegister)
+      this.pushEvaluation(['while', conditionRegister], conditionRegister, this.registry[conditionRegister])
+      if (!this.registry[conditionRegister]) return
+
+      bodyWithRegisters.forEach(({ instruction, bodyRegister }) => {
+        this.evaluateInstructionIntoRegister(instruction, bodyRegister)
+      })
+    }
+    return 'RIP'
+  }
+
+  evaluateNotEqualInstruction(instruction: NotEqualInstruction, intoRegister: string | null) {
+    const [_command, variable, expression] = instruction
+    const expected = this.evaluateExpression(expression, intoRegister)
+    const actual = this.registry[variable]
+    const op: Op = ['!=', variable, 1 || expected]
+    const as = intoRegister
+    const is = actual !== expected
+
+    if (as === null) {
+      console.error('register is null, skipping operation')
+    } else {
+      this.pushEvaluation(op, as, is)
+    }
+  }
+
+  evaluateAndInstruction(instruction: AndInstruction, intoRegister: string | null) {
+    this.evaluateTwoNumberInstruction(
+      ['&', instruction[1], instruction[2]],
+      this.registry[instruction[1]],
+      this.registry[instruction[2]],
+      intoRegister,
+      (l, r) => l & r,
+    )
+  }
+
+  evaluateXorInstruction(instruction: XorInstruction, intoRegister: string | null) {
+    this.evaluateTwoNumberInstruction(
+      ['^', instruction[1], instruction[2]],
+      this.registry[instruction[1]],
+      this.registry[instruction[2]],
+      intoRegister,
+      (l, r) => l ^ r,
+    )
+  }
+
+  evaluateShiftLeftInstruction(instruction: ShiftLeftInstruction, intoRegister: string | null) {
+    this.evaluateTwoNumberInstruction(
+      ['<<', instruction[1], instruction[2]],
+      this.registry[instruction[1]],
+      instruction[2],
+      intoRegister,
+      (l, r) => l << r,
+    )
+  }
+
+  evaluateTwoNumberInstruction(
+    op: Op,
+    left: Is,
+    right: Is,
+    intoRegister: string | null,
+    callback: (l: number, r: number) => number,
+  ) {
+    if (typeof left !== 'number') {
+      console.error('expected number on left side, got:', left)
+    } else if (typeof right !== 'number') {
+      console.error('expected number on right side, got:', right)
+    } else if (intoRegister === null) {
+      console.error('register is null, skipping operation')
+    } else {
+      this.pushEvaluation(op, intoRegister, callback(left, right))
+    }
+  }
+
+  evaluateExpression(expression: Expression, intoRegister: string | null): Is {
     if (typeof expression === 'number') {
       return expression
     }
-    switch (expression[0]) {
-      // case '!=':
-      //   return this.evaluateNotEqualInstruction(expression as XorInstruction)
-      // case '&':
-      //   return this.evaluateAndInstruction(expression as AndInstruction)
-      // case '^':
-      //   return this.evaluateXorInstruction(expression as XorInstruction)
-      // case '<<':
-      //   return this.evaluateShiftLeftInstruction(expression as ShiftLeftInstruction)
-      default:
-        return 0
+
+    if (intoRegister) {
+      this.evaluateInstructionIntoRegister(expression, intoRegister)
+      return this.registry[intoRegister]
+    } else {
+      console.error('evaluating expression without a register to store it in')
     }
   }
 }

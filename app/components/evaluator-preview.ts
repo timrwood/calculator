@@ -13,7 +13,6 @@ export interface EvaluatorPreviewSignature {
 
 export default class EvaluatorPreview extends Component<EvaluatorPreviewSignature> {
   get evaluations() {
-    console.log(this.args)
     const evaluator = this.args.evaluator
     evaluator.evaluate()
     return evaluator.evaluations

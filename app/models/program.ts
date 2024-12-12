@@ -1,11 +1,12 @@
 export type LiteralExpression = number
-export type SetInstruction = ['set', string, Expression]
-export type WhileInstruction = ['while', Instruction, Instruction[]]
-export type ReturnInstruction = ['return', string]
-export type NotEqualInstruction = ['!=', string, Expression]
+
 export type AndInstruction = ['&', string, string]
+export type NotEqualInstruction = ['!=', string, Expression]
+export type ReturnInstruction = ['return', string]
+export type SetInstruction = ['set', string, Expression]
+export type ShiftLeftInstruction = ['<<', string, number]
+export type WhileInstruction = ['while', Instruction, Instruction[]]
 export type XorInstruction = ['^', string, string]
-export type ShiftLeftInstruction = ['<<', string, Expression]
 
 export type Instruction =
   | SetInstruction

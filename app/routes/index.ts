@@ -5,8 +5,8 @@ import Evaluator from '../models/evaluator'
 export default class IndexRoute extends Route {
   model() {
     const program = new Program([
-      ['set', 'x', 12],
-      ['set', 'y', 34],
+      ['set', 'x', 123],
+      ['set', 'y', 456],
       [
         'while',
         ['!=', 'x', 0],
