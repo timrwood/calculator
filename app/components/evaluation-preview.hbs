@@ -1,1 +1,13 @@
-<div class="font-mono">{{this.evaluationJson}}</div>
+<div class="flex font-mono">
+  <div class="w-1/4">
+    ({{join ' ' @evaluation.op}})
+  </div>
+  <div class="w-1/4">
+    <span class="text-red-600">{{@evaluation.as}}</span>
+    <span class="text-slate-400">=</span>
+    <span class={{this.isClassName}}>{{@evaluation.is}}</span>
+  </div>
+  <div class="w-1/2">
+    {{json @evaluation.re}}
+  </div>
+</div>

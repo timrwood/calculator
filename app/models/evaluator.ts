@@ -15,7 +15,7 @@ type As = string
 type Is = number | boolean | undefined
 
 type Op =
-  | ['set']
+  | ['set', string, any]
   | ['!=', string, Is]
   | ['while', string]
   | ['&', string, string]
@@ -136,7 +136,7 @@ export default class Evaluator {
   evaluateSetInstruction(instruction: SetInstruction, intoRegister: string | null) {
     const as = instruction[1]
     const is = this.evaluateExpression(instruction[2], intoRegister)
-    const op: Op = ['set']
+    const op: Op = ['set', as, intoRegister || is]
 
     this.pushEvaluation(op, as, is)
   }

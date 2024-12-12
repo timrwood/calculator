@@ -12,7 +12,14 @@ export interface EvaluationPreviewSignature {
 }
 
 export default class EvaluationPreview extends Component<EvaluationPreviewSignature> {
-  get evaluationJson() {
-    return JSON.stringify(this.args.evaluation, null, 2)
+  get isClassName() {
+    switch (typeof this.args.evaluation.is) {
+      case 'boolean':
+        return 'text-green-600'
+      case 'number':
+        return 'text-blue-600'
+      default:
+        return 'text-slate-600'
+    }
   }
 }
