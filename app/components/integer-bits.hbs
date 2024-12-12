@@ -1,0 +1,13 @@
+<div class="flex justify-end">
+  {{#if this.bits}}
+    <div class="mr-2 {{@onColor}}">{{@prefix}}</div>
+  {{/if}}
+
+  {{#each this.bits as |bit|}}
+    {{#if bit}}
+      <div class="pl-0.5 {{@onColor}}">1</div>
+    {{else}}
+      <div class="pl-0.5 {{@offColor}}">0</div>
+    {{/if}}
+  {{/each}}
+</div>

@@ -12,7 +12,7 @@ export default class IndexRoute extends Route {
         ['!=', 'x', 0],
         [
           ['set', 'carry', ['&', 'x', 'y']],
-          ['set', 'y', ['^', 'y', 'x']],
+          ['set', 'y', ['^', 'x', 'y']],
           ['set', 'x', ['<<', 'carry', 1]],
         ],
       ],

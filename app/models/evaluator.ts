@@ -11,10 +11,10 @@ import type {
   Expression,
 } from './program'
 
-type As = string
-type Is = number | boolean | undefined
+export type As = string
+export type Is = number | boolean | undefined
 
-type Op =
+export type Op =
   | ['set', string, any]
   | ['!=', string, Is]
   | ['while', string]

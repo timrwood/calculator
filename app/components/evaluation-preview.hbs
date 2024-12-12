@@ -1,4 +1,4 @@
-<div class="flex font-mono">
+<div class="flex font-mono py-2 border-b-2">
   <div class="w-1/4">
     ({{join ' ' @evaluation.op}})
   </div>
@@ -8,6 +8,12 @@
     <span class={{this.isClassName}}>{{@evaluation.is}}</span>
   </div>
   <div class="w-1/2">
-    {{json @evaluation.re}}
+    {{#if this.firstArg}}
+      <IntegerBits @number={{this.firstArg}} @prefix={{this.firstArgPrefix}} @onColor="text-slate-600" @offColor="text-slate-300" />
+    {{/if}}
+    {{#if this.secondArg}}
+      <IntegerBits @number={{this.secondArg}} @prefix={{this.secondArgPrefix}} @onColor="text-slate-600" @offColor="text-slate-300" />
+    {{/if}}
+    <IntegerBits @number={{@evaluation.is}} @prefix="=" @onColor="text-blue-800" @offColor="text-blue-300" />
   </div>
 </div>
