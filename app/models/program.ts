@@ -3,10 +3,10 @@ export type Literal = number
 export type Reference = string
 
 export type ArgsInstruction = [Reference, 'args', Literal]
-export type BitwiseAndInstruction = [Reference, '&', Reference, Reference]
-export type BitwiseNotInstruction = [Reference, '~', Reference]
-export type BitwiseShiftLeftInstruction = [Reference, '<<', Reference, Literal]
-export type BitwiseXorInstruction = [Reference, '^', Reference, Reference]
+export type BitwiseAndInstruction = [Reference, 'and', Reference, Reference]
+export type BitwiseNotInstruction = [Reference, 'not', Reference]
+export type BitwiseShiftLeftInstruction = [Reference, 'lshift', Reference, Literal]
+export type BitwiseXorInstruction = [Reference, 'xor', Reference, Reference]
 export type ReturnInstruction = [Reference, 'return']
 export type WhileInstruction = [Reference, 'while', Instruction[]]
 
@@ -20,19 +20,3 @@ export type Instruction =
   | WhileInstruction
 
 export type Program = Instruction[]
-
-const test: Program = [
-  ['x', 'args', 0],
-  ['y', 'args', 1],
-  [
-    'x',
-    'while',
-    [
-      ['t', '~', 'x'],
-      ['t', '&', 't', 'y'],
-      ['x', '^', 'x', 'y'],
-      ['y', '<<', 't', 1],
-    ],
-  ],
-  ['y', 'return'],
-]

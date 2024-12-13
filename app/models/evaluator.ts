@@ -53,25 +53,25 @@ registerCallback('while', (instruction: Instruction, evaluator: Evaluator) => {
   }
 })
 
-registerCallback('&', (instruction: Instruction, evaluator: Evaluator) => {
+registerCallback('and', (instruction: Instruction, evaluator: Evaluator) => {
   const [as, _op, left, right] = instruction as BitwiseAndInstruction
 
   evaluator.push(instruction, as, evaluator.get(left) & evaluator.get(right))
 })
 
-registerCallback('^', (instruction: Instruction, evaluator: Evaluator) => {
+registerCallback('xor', (instruction: Instruction, evaluator: Evaluator) => {
   const [as, _op, left, right] = instruction as BitwiseXorInstruction
 
   evaluator.push(instruction, as, evaluator.get(left) ^ evaluator.get(right))
 })
 
-registerCallback('<<', (instruction: Instruction, evaluator: Evaluator) => {
+registerCallback('lshift', (instruction: Instruction, evaluator: Evaluator) => {
   const [as, _op, left, right] = instruction as BitwiseShiftLeftInstruction
 
   evaluator.push(instruction, as, evaluator.get(left) << right)
 })
 
-registerCallback('~', (instruction: Instruction, evaluator: Evaluator) => {
+registerCallback('not', (instruction: Instruction, evaluator: Evaluator) => {
   const [as, _op, left] = instruction as BitwiseNotInstruction
 
   evaluator.push(instruction, as, ~evaluator.get(left))
@@ -79,6 +79,9 @@ registerCallback('~', (instruction: Instruction, evaluator: Evaluator) => {
 
 registerCallback('return', (instruction: Instruction, evaluator: Evaluator) => {
   const [as, _op] = instruction as ReturnInstruction
+
+  evaluator.returnValue = evaluator.get(as)
+  console.log(evaluator.returnValue)
 
   evaluator.push(instruction, as, evaluator.get(as))
 })
@@ -88,6 +91,7 @@ export default class Evaluator {
   registry: ReferenceRegistry = {}
   evaluations: Evaluation[] = []
   args: number[] = []
+  returnValue: number | undefined
 
   constructor(program: Program, args: number[]) {
     this.program = program
@@ -105,6 +109,10 @@ export default class Evaluator {
 
   get(args: Reference): number {
     return this.registry[args] || 0
+  }
+
+  setReturn(value: number) {
+    this.returnValue = value
   }
 
   set(args: Reference, value: number) {

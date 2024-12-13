@@ -11,7 +11,7 @@ export default class IndexController extends Controller {
   @tracked y = undefined
 
   get program(): Program {
-    return this.subtractProgram
+    return this.addProgram
   }
 
   get args(): number[] {
@@ -28,9 +28,9 @@ export default class IndexController extends Controller {
         'x',
         'while',
         [
-          ['t', '&', 'x', 'y'],
-          ['y', '^', 'x', 'y'],
-          ['x', '<<', 't', 1],
+          ['carry', 'and', 'x', 'y'],
+          ['y', 'xor', 'x', 'y'],
+          ['x', 'lshift', 'carry', 1],
         ],
       ],
       ['y', 'return'],
@@ -45,10 +45,10 @@ export default class IndexController extends Controller {
         'y',
         'while',
         [
-          ['t', '~', 'x'],
-          ['t', '&', 't', 'y'],
-          ['x', '^', 'x', 'y'],
-          ['y', '<<', 't', 1],
+          ['carry', 'not', 'x'],
+          ['carry', 'and', 'carry', 'y'],
+          ['x', 'xor', 'x', 'y'],
+          ['y', 'lshift', 'carry', 1],
         ],
       ],
       ['x', 'return'],
@@ -56,7 +56,9 @@ export default class IndexController extends Controller {
   }
 
   get evaluator(): Evaluator {
-    return new Evaluator(this.program, this.args)
+    const evaluator = new Evaluator(this.program, this.args)
+    evaluator.evaluate()
+    return evaluator
   }
 
   @action setX(event: Event) {
