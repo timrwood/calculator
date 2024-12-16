@@ -6,7 +6,7 @@ import type {
   BitwiseXorInstruction,
   ArgsInstruction,
   ReturnInstruction,
-  WhileInstruction,
+  LoopInstruction,
   Instruction,
   Reference,
 } from './program'
@@ -40,15 +40,11 @@ registerCallback('args', (instruction: Instruction, evaluator: Evaluator) => {
   evaluator.push(instruction, as, evaluator.getArg(index))
 })
 
-registerCallback('while', (instruction: Instruction, evaluator: Evaluator) => {
-  const [as, op, body] = instruction as WhileInstruction
-  let maxIterations = 32
+registerCallback('loop', (instruction: Instruction, evaluator: Evaluator) => {
+  const [as, op, body] = instruction as LoopInstruction
 
-  while (maxIterations--) {
-    const condition = ~~(evaluator.registry[as] || 0)
-    evaluator.push([as, op, []], as, condition)
-
-    if (!condition) return
+  for (let i = 0; i < 16; i++) {
+    evaluator.push([as, op, []], as, i)
     evaluator.evaluateInstructions(body)
   }
 })

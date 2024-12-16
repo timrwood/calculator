@@ -32,9 +32,9 @@ export default class EvaluationPreview extends Component<EvaluationPreviewSignat
   get readableSyntax() {
     const op = this.args.evaluation.op
     switch (op[1]) {
-      case 'while':
+      case 'loop':
       case 'return':
-        return this.readableWhile
+        return this.readableFunction
       case 'not':
       case 'args':
         return this.readableUnary
@@ -66,7 +66,7 @@ export default class EvaluationPreview extends Component<EvaluationPreviewSignat
     ]
   }
 
-  get readableWhile() {
+  get readableFunction() {
     return [this.operator(), this.token('('), this.referenceOrValue(), this.token(')')]
   }
 

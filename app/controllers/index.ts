@@ -25,12 +25,12 @@ export default class IndexController extends Controller {
       ['x', 'args', 0],
       ['y', 'args', 1],
       [
-        'x',
-        'while',
+        'i',
+        'loop',
         [
-          ['carry', 'and', 'x', 'y'],
+          ['c', 'and', 'x', 'y'],
           ['y', 'xor', 'x', 'y'],
-          ['x', 'lshift', 'carry', 1],
+          ['x', 'lshift', 'c', 1],
         ],
       ],
       ['y', 'return'],
@@ -42,8 +42,8 @@ export default class IndexController extends Controller {
       ['x', 'args', 0],
       ['y', 'args', 1],
       [
-        'y',
-        'while',
+        'i',
+        'loop',
         [
           ['carry', 'not', 'x'],
           ['carry', 'and', 'carry', 'y'],

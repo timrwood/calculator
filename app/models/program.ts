@@ -8,7 +8,7 @@ export type BitwiseNotInstruction = [Reference, 'not', Reference]
 export type BitwiseShiftLeftInstruction = [Reference, 'lshift', Reference, Literal]
 export type BitwiseXorInstruction = [Reference, 'xor', Reference, Reference]
 export type ReturnInstruction = [Reference, 'return']
-export type WhileInstruction = [Reference, 'while', Instruction[]]
+export type LoopInstruction = [Reference, 'loop', Instruction[]]
 
 export type Instruction =
   | ArgsInstruction
@@ -17,6 +17,6 @@ export type Instruction =
   | BitwiseShiftLeftInstruction
   | BitwiseXorInstruction
   | ReturnInstruction
-  | WhileInstruction
+  | LoopInstruction
 
 export type Program = Instruction[]
