@@ -79,16 +79,22 @@ const interpreters: { [key: string]: Interpretation } = {
   xor: interpretXor,
 }
 
-function recordEvaluation(evaluationSrc: EvaluationSrc, visualSources: VisualSource[]): Evaluation {
+function makeVisual(
+  evaluationSrc: EvaluationSrc,
+  op: string,
+  ref: number,
+  val: number | undefined = undefined,
+): Visual {
+  return {
+    op,
+    ref: evaluationSrc.program.refs[ref] as string,
+    val: val ?? (evaluationSrc.program.vals[ref] as number),
+  }
+}
+
+function recordEvaluation(evaluationSrc: EvaluationSrc, visuals: Visual[]): Evaluation {
   const program = evaluationSrc.program
   const step = evaluationSrc.step
-  const visuals: Visual[] = visualSources.map(source => {
-    return {
-      op: source.op,
-      val: program.vals[source.ref] as number,
-      ref: program.refs[source.ref] as string,
-    }
-  })
   return {
     program,
     visuals,
@@ -104,7 +110,7 @@ function interpretArgs(evaluationSrc: EvaluationSrc): Evaluation {
   const val = program.args[cmd[2]] as number
   program.vals[cmd[1]] = val
 
-  return recordEvaluation(evaluationSrc, [{ op: '=', ref: cmd[1] }])
+  return recordEvaluation(evaluationSrc, [makeVisual(evaluationSrc, '=', cmd[1])])
 }
 
 function interpretAnd(evaluationSrc: EvaluationSrc): Evaluation {
@@ -114,9 +120,9 @@ function interpretAnd(evaluationSrc: EvaluationSrc): Evaluation {
   evaluationSrc.vals[cmd[1]] = left & right
 
   return recordEvaluation(evaluationSrc, [
-    { op: '', ref: cmd[2] },
-    { op: 'and', ref: cmd[3] },
-    { op: '=', ref: cmd[1] },
+    makeVisual(evaluationSrc, '', cmd[1], left),
+    makeVisual(evaluationSrc, 'and', cmd[1], right),
+    makeVisual(evaluationSrc, '=', cmd[1]),
   ])
 }
 
@@ -126,8 +132,8 @@ function interpretNot(evaluationSrc: EvaluationSrc): Evaluation {
   evaluationSrc.vals[cmd[1]] = ~before
 
   return recordEvaluation(evaluationSrc, [
-    { op: 'not', ref: cmd[2] },
-    { op: '=', ref: cmd[1] },
+    makeVisual(evaluationSrc, 'not', cmd[2]),
+    makeVisual(evaluationSrc, '=', cmd[1]),
   ])
 }
 
@@ -138,7 +144,7 @@ function interpretRestart(evaluationSrc: EvaluationSrc): Evaluation {
 
   if (val) program.step = program.jmps[cmd[1]] as number
 
-  return recordEvaluation(evaluationSrc, [{ op: 'restart', ref: cmd[1] }])
+  return recordEvaluation(evaluationSrc, [makeVisual(evaluationSrc, 'restart', cmd[1])])
 }
 
 function interpretStart(evaluationSrc: EvaluationSrc): Evaluation {
@@ -147,7 +153,7 @@ function interpretStart(evaluationSrc: EvaluationSrc): Evaluation {
 
   program.jmps[cmd[1]] = evaluationSrc.step
 
-  return recordEvaluation(evaluationSrc, [{ op: 'start', ref: cmd[1] }])
+  return recordEvaluation(evaluationSrc, [makeVisual(evaluationSrc, 'start', cmd[1])])
 }
 
 function interpretReturn(evaluationSrc: EvaluationSrc): Evaluation {
@@ -155,31 +161,30 @@ function interpretReturn(evaluationSrc: EvaluationSrc): Evaluation {
   const cmd = evaluationSrc.cmd as ReturnCmd
   program.retn = evaluationSrc.vals[cmd[1]] as number
 
-  return recordEvaluation(evaluationSrc, [{ op: 'return', ref: cmd[1] }])
+  return recordEvaluation(evaluationSrc, [makeVisual(evaluationSrc, 'return', cmd[1])])
 }
 
 function interpretShiftLeft(evaluationSrc: EvaluationSrc): Evaluation {
   const cmd = evaluationSrc.cmd as ShiftLeftCmd
-  const l = evaluationSrc.vals[cmd[2]] as number
-  const r = cmd[3]
-  const val = l << r
-  evaluationSrc.vals[cmd[1]] = val
+  const left = evaluationSrc.vals[cmd[2]] as number
+  const right = cmd[3]
+  evaluationSrc.vals[cmd[1]] = left << right
 
   return recordEvaluation(evaluationSrc, [
-    { op: '<<', ref: cmd[2] },
-    { op: '=', ref: cmd[1] },
+    makeVisual(evaluationSrc, '<<', cmd[2], left),
+    makeVisual(evaluationSrc, '=', cmd[1]),
   ])
 }
 
 function interpretXor(evaluationSrc: EvaluationSrc): Evaluation {
   const cmd = evaluationSrc.cmd as XorCmd
-  const l = evaluationSrc.vals[cmd[2]] as number
-  const r = evaluationSrc.vals[cmd[3]] as number
-  evaluationSrc.vals[cmd[1]] = l ^ r
+  const left = evaluationSrc.vals[cmd[2]] as number
+  const right = evaluationSrc.vals[cmd[3]] as number
+  evaluationSrc.vals[cmd[1]] = left ^ right
 
   return recordEvaluation(evaluationSrc, [
-    { op: '', ref: cmd[2] },
-    { op: 'xor', ref: cmd[3] },
-    { op: '=', ref: cmd[1] },
+    makeVisual(evaluationSrc, '', cmd[2], left),
+    makeVisual(evaluationSrc, 'xor', cmd[3], right),
+    makeVisual(evaluationSrc, '=', cmd[1]),
   ])
 }
