@@ -37,7 +37,7 @@ export default class InstructionPreview extends Component<InstructionPreviewSign
     output.push(this.indent(`(${instruction.slice(0, -1).join(' ')}`, indentation))
 
     const body = instruction.at(-1) as Instruction[]
-    body.forEach((instruction) => {
+    body.forEach(instruction => {
       output.push(this.command(instruction, indentation + 1))
     })
 

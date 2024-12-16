@@ -1,20 +1,26 @@
 import type {
-  Src,
-  Cmd,
-  ArgsCmd,
   AndCmd,
+  ArgsCmd,
+  Cmd,
   NotCmd,
   RestartCmd,
   ReturnCmd,
   ShiftLeftCmd,
+  Src,
   StartCmd,
   XorCmd,
 } from './commands'
 import type { Program } from './parser'
 
+type VisualSource = {
+  op: string
+  ref: number
+}
+
 export type Visual = {
   op: string
   val: number
+  ref: string
 }
 
 export type Evaluation = {
@@ -25,20 +31,37 @@ export type Evaluation = {
   src: Src
 }
 
+export type EvaluationSrc = {
+  program: Program
+  cmd: Cmd
+  src: Src
+  vals: Int32Array
+  step: number
+}
+
 export type Interpreter = {
   program: Program
   evaluations: Evaluation[]
 }
 
-type Interpretation = (program: Program) => Evaluation
+type Interpretation = (evaluationSrc: EvaluationSrc) => Evaluation
 
 export function interpret(program: Program): Interpreter {
   const evaluations: Evaluation[] = []
 
   while (program.step < program.cmds.length) {
-    const cmd = program.cmds[program.step] as Cmd
+    const step = program.step
+    const cmd = program.cmds[step] as Cmd
+    const evaluationSrc: EvaluationSrc = {
+      program,
+      cmd,
+      src: program.srcs[step] as Src,
+      vals: program.vals,
+      step,
+    }
+
     const interpreter = interpreters[cmd[0]]
-    if (interpreter) evaluations.push(interpreter(program))
+    if (interpreter) evaluations.push(interpreter(evaluationSrc))
     program.step++
   }
 
@@ -47,7 +70,7 @@ export function interpret(program: Program): Interpreter {
 
 const interpreters: { [key: string]: Interpretation } = {
   args: interpretArgs,
-  and: interpretAdd,
+  and: interpretAnd,
   not: interpretNot,
   restart: interpretRestart,
   start: interpretStart,
@@ -56,97 +79,107 @@ const interpreters: { [key: string]: Interpretation } = {
   xor: interpretXor,
 }
 
-function recordEvaluation(program: Program, visuals: Visual[]): Evaluation {
+function recordEvaluation(evaluationSrc: EvaluationSrc, visualSources: VisualSource[]): Evaluation {
+  const program = evaluationSrc.program
+  const step = evaluationSrc.step
+  const visuals: Visual[] = visualSources.map(source => {
+    return {
+      op: source.op,
+      val: program.vals[source.ref] as number,
+      ref: program.refs[source.ref] as string,
+    }
+  })
   return {
     program,
     visuals,
     vals: program.vals.slice(),
-    cmd: program.cmds[program.step] as Cmd,
-    src: program.srcs[program.step] as Src,
+    cmd: program.cmds[step] as Cmd,
+    src: program.srcs[step] as Src,
   }
 }
 
-function interpretArgs(program: Program): Evaluation {
-  const cmd = program.cmds[program.step] as ArgsCmd
+function interpretArgs(evaluationSrc: EvaluationSrc): Evaluation {
+  const cmd = evaluationSrc.cmd as ArgsCmd
+  const program = evaluationSrc.program
   const val = program.args[cmd[2]] as number
   program.vals[cmd[1]] = val
 
-  return recordEvaluation(program, [{ op: '=', val }])
+  return recordEvaluation(evaluationSrc, [{ op: '=', ref: cmd[1] }])
 }
 
-function interpretAdd(program: Program): Evaluation {
-  const cmd = program.cmds[program.step] as AndCmd
-  const l = program.args[cmd[2]] as number
-  const r = program.args[cmd[3]] as number
-  const val = l & r
-  program.vals[cmd[1]] = val
+function interpretAnd(evaluationSrc: EvaluationSrc): Evaluation {
+  const cmd = evaluationSrc.cmd as AndCmd
+  const left = evaluationSrc.vals[cmd[2]] as number
+  const right = evaluationSrc.vals[cmd[3]] as number
+  evaluationSrc.vals[cmd[1]] = left & right
 
-  return recordEvaluation(program, [
-    { op: '', val: l },
-    { op: 'and', val: r },
-    { op: '=', val },
+  return recordEvaluation(evaluationSrc, [
+    { op: '', ref: cmd[2] },
+    { op: 'and', ref: cmd[3] },
+    { op: '=', ref: cmd[1] },
   ])
 }
 
-function interpretNot(program: Program): Evaluation {
-  const cmd = program.cmds[program.step] as NotCmd
-  const before = program.args[cmd[2]] as number
-  const val = ~before
-  program.vals[cmd[1]] = val
+function interpretNot(evaluationSrc: EvaluationSrc): Evaluation {
+  const cmd = evaluationSrc.cmd as NotCmd
+  const before = evaluationSrc.vals[cmd[2]] as number
+  evaluationSrc.vals[cmd[1]] = ~before
 
-  return recordEvaluation(program, [
-    { op: 'not', val: before },
-    { op: '=', val },
+  return recordEvaluation(evaluationSrc, [
+    { op: 'not', ref: cmd[2] },
+    { op: '=', ref: cmd[1] },
   ])
 }
 
-function interpretRestart(program: Program): Evaluation {
-  const cmd = program.cmds[program.step] as RestartCmd
-  if (program.vals[cmd[1]]) {
-    program.step = program.jmps[cmd[1]] as number
-  }
+function interpretRestart(evaluationSrc: EvaluationSrc): Evaluation {
+  const program = evaluationSrc.program
+  const cmd = evaluationSrc.cmd as RestartCmd
+  const val = evaluationSrc.vals[cmd[1]] as number
 
-  return recordEvaluation(program, [{ op: 'restart', val: cmd[1] }])
+  if (val) program.step = program.jmps[cmd[1]] as number
+
+  return recordEvaluation(evaluationSrc, [{ op: 'restart', ref: cmd[1] }])
 }
 
-function interpretStart(program: Program): Evaluation {
-  const cmd = program.cmds[program.step] as StartCmd
-  program.jmps[cmd[1]] = program.step
+function interpretStart(evaluationSrc: EvaluationSrc): Evaluation {
+  const program = evaluationSrc.program
+  const cmd = evaluationSrc.cmd as StartCmd
 
-  return recordEvaluation(program, [{ op: 'start', val: cmd[1] }])
+  program.jmps[cmd[1]] = evaluationSrc.step
+
+  return recordEvaluation(evaluationSrc, [{ op: 'start', ref: cmd[1] }])
 }
 
-function interpretReturn(program: Program): Evaluation {
-  const cmd = program.cmds[program.step] as ReturnCmd
-  program.retn = program.vals[cmd[1]] as number
+function interpretReturn(evaluationSrc: EvaluationSrc): Evaluation {
+  const program = evaluationSrc.program
+  const cmd = evaluationSrc.cmd as ReturnCmd
+  program.retn = evaluationSrc.vals[cmd[1]] as number
 
-  return recordEvaluation(program, [{ op: 'return', val: program.retn }])
+  return recordEvaluation(evaluationSrc, [{ op: 'return', ref: cmd[1] }])
 }
 
-function interpretShiftLeft(program: Program): Evaluation {
-  const cmd = program.cmds[program.step] as ShiftLeftCmd
-  const l = program.args[cmd[2]] as number
-  const r = program.args[cmd[3]] as number
+function interpretShiftLeft(evaluationSrc: EvaluationSrc): Evaluation {
+  const cmd = evaluationSrc.cmd as ShiftLeftCmd
+  const l = evaluationSrc.vals[cmd[2]] as number
+  const r = cmd[3]
   const val = l << r
-  program.vals[cmd[1]] = val
+  evaluationSrc.vals[cmd[1]] = val
 
-  return recordEvaluation(program, [
-    { op: '', val: l },
-    { op: '<<', val: r },
-    { op: '=', val },
+  return recordEvaluation(evaluationSrc, [
+    { op: '<<', ref: cmd[2] },
+    { op: '=', ref: cmd[1] },
   ])
 }
 
-function interpretXor(program: Program): Evaluation {
-  const cmd = program.cmds[program.step] as XorCmd
-  const l = program.args[cmd[2]] as number
-  const r = program.args[cmd[3]] as number
-  const val = l ^ r
-  program.vals[cmd[1]] = val
+function interpretXor(evaluationSrc: EvaluationSrc): Evaluation {
+  const cmd = evaluationSrc.cmd as XorCmd
+  const l = evaluationSrc.vals[cmd[2]] as number
+  const r = evaluationSrc.vals[cmd[3]] as number
+  evaluationSrc.vals[cmd[1]] = l ^ r
 
-  return recordEvaluation(program, [
-    { op: '', val: l },
-    { op: 'xor', val: r },
-    { op: '=', val },
+  return recordEvaluation(evaluationSrc, [
+    { op: '', ref: cmd[2] },
+    { op: 'xor', ref: cmd[3] },
+    { op: '=', ref: cmd[1] },
   ])
 }

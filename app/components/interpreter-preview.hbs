@@ -1,0 +1,38 @@
+<div class="p-4 bg-slate-50 border-2 border-slate-200">
+  <div class="flex font-mono py-2 font-bold">
+    <div class="w-1/3">Operation</div>
+    <div class="w-1/3 text-right">State</div>
+    <div class="w-1/3 text-right">Visualization</div>
+  </div>
+
+  {{#each @interpreter.evaluations as |evaluation|}}
+    <div class="flex font-mono py-2 border-t-2">
+      <div class="w-1/3">
+        {{evaluation.src}}
+      </div>
+
+      <div class="w-1/3">
+        {{#each evaluation.vals as |val index|}}
+          <div class="flex justify-end">
+            <div class="pr-2">
+              {{get @interpreter.program.refs index}} = {{val}} =
+            </div>
+            <IntegerBits @number={{val}} @onColor="text-blue-800" @offColor="text-blue-300" />
+          </div>
+        {{/each}}
+      </div>
+
+      <div class="w-1/3">
+        {{#each evaluation.visuals as |visual|}}
+          <div class="flex justify-end">
+            <div class="pr-2">
+              {{visual.op}}
+              {{visual.ref}}
+            </div>
+            <IntegerBits @number={{visual.val}} @onColor="text-blue-800" @offColor="text-blue-300" />
+          </div>
+        {{/each}}
+      </div>
+    </div>
+  {{/each}}
+</div>

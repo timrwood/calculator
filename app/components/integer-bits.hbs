@@ -1,13 +1,9 @@
-<div class="flex justify-end">
-  {{#if this.bits}}
-    <div class="mr-2 {{@onColor}}">{{@prefix}}</div>
-  {{/if}}
-
+<div class="inline-flex justify-end items-strech gap-x-px pb-px">
   {{#each this.bits as |bit|}}
     {{#if bit}}
-      <div class="pl-0.5 {{@onColor}}">1</div>
+      <div class="w-3 bg-blue-800"></div>
     {{else}}
-      <div class="pl-0.5 {{@offColor}}">0</div>
+      <div class="w-3 bg-blue-100"></div>
     {{/if}}
   {{/each}}
 </div>

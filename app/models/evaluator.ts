@@ -128,6 +128,6 @@ export default class Evaluator {
   }
 
   evaluateInstructions(instructions: Instruction[]) {
-    instructions.forEach((instruction) => evaluationCallbacks[instruction[1]]?.(instruction, this))
+    instructions.forEach(instruction => evaluationCallbacks[instruction[1]]?.(instruction, this))
   }
 }

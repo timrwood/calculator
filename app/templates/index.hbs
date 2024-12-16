@@ -4,8 +4,8 @@
     +
     <Input class="border-2" @value={{this.y}} {{on "input" this.setY}} />
     =
-    {{this.evaluator.returnValue}}
+    {{this.interpreter.program.retn}}
   </div>
-  <ProgramPreview @program={{this.program}} />
-  <EvaluatorPreview @evaluator={{this.evaluator}} />
+  {{!-- <ProgramPreview @program={{this.interpreter}} /> --}}
+  <InterpreterPreview @interpreter={{this.interpreter}} />
 </div>

@@ -5,6 +5,7 @@ import Evaluator from '../models/evaluator'
 import { tracked } from '@glimmer/tracking'
 import { parse } from '../models/parser'
 import { interpret } from '../models/interpreter'
+import type { Interpreter } from '../models/interpreter'
 
 export default class IndexController extends Controller {
   queryParams = ['x', 'y']
@@ -12,14 +13,32 @@ export default class IndexController extends Controller {
   @tracked x: number = 0
   @tracked y: number = 0
 
-  get program(): Program {
-    return this.addProgram
+  get interpreter(): Interpreter {
+    const prog = parse(this.addSource)
+    prog.args[0] = ~~(this.x ?? 0)
+    prog.args[1] = ~~(this.y ?? 0)
+    return interpret(prog)
   }
 
   get args(): number[] {
     const x = ~~(this.x ?? 0)
     const y = ~~(this.y ?? 0)
     return [x, y]
+  }
+
+  get addSource(): string {
+    return `
+      args x 0
+      args y 1
+
+      start x
+        and c x y
+        xor y x y
+        shiftl x c 1
+      restart x
+
+      return y
+    `
   }
 
   get addProgram(): Program {
@@ -64,29 +83,10 @@ export default class IndexController extends Controller {
   }
 
   @action setX(event: Event) {
-    if (event.target instanceof HTMLInputElement) {
-      this.x = event.target.valueAsNumber
-    }
+    this.x = event.target?.value
   }
 
   @action setY(event: InputEvent) {
-    if (event.target instanceof HTMLInputElement) {
-      this.y = event.target.valueAsNumber
-    }
+    this.y = event.target?.value
   }
 }
-
-const prog = parse(`
-  args x 0
-  args y 1
-
-  start x
-    and c x y
-    xor y x y
-    shiftl x c 1
-  restart x
-
-  return y
-`)
-
-console.log(interpret(prog))
