@@ -1,21 +1,11 @@
-<div class="table table-auto w-full">
-  <div class="table-header-group font-mono py-2 font-bold">
-    <div class="table-row">
-      <div class="table-cell">Operation</div>
-      <div class="table-cell"></div>
-      <div class="table-cell"></div>
-      <div class="table-cell">Visualization</div>
-      <div class="table-cell"></div>
-      <div class="table-cell"></div>
-      <div class="table-cell"></div>
-      <div class="table-cell">State</div>
-      <div class="table-cell"></div>
-    </div>
+<div class="grid grid-cols-[auto_1fr_auto_2fr_auto_1fr_auto_2fr_auto]">
+  <div class="grid grid-cols-subgrid col-span-9">
+    <div class="col-start-1">Operation</div>
+    <div class="col-start-3">Visualization</div>
+    <div class="col-start-6">State</div>
   </div>
 
-  <div class="table-row-group">
-    {{#each @interpreter.evaluations as |evaluation|}}
-      <EvaluationPreview @evaluation={{evaluation}} @interpreter={{@interpreter}} />
-    {{/each}}
-  </div>
+  {{#each @interpreter.evaluations as |evaluation|}}
+    <EvaluationPreview @evaluation={{evaluation}} @interpreter={{@interpreter}} />
+  {{/each}}
 </div>

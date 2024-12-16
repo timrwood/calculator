@@ -1,13 +1,11 @@
-<div class="table-row font-mono leading-4">
-  <div class="table-cell pr-8 text-nowrap">
+<div class="grid grid-cols-subgrid col-span-9 font-mono leading-4 p-6 border rounded-lg border-slate-200 gap-2 mb-2 bg-white">
+  <div class="text-nowrap col-start-1">
     {{#each this.srcTokens as |token|}}
       <Token @value={{token.value}} @type={{token.type}} />
     {{/each}}
   </div>
 
-  <div class="table-cell w-1/2"></div>
-
-  <div class="table-cell pb-3">
+  <div class="col-start-3">
     {{#each @evaluation.visuals as |visual|}}
       <div class="text-right text-nowrap">
         <Token @value={{visual.op}} @type='operation' />
@@ -16,15 +14,15 @@
     {{/each}}
   </div>
 
-  <div class="table-cell pb-3 px-2">
+  <div class="col-start-4">
     {{#each @evaluation.visuals as |visual|}}
-      <div class="h-4 flex items-center">
+      <div class="h-4">
         <IntegerBits @number={{visual.val}} />
       </div>
     {{/each}}
   </div>
 
-  <div class="table-cell pb-3">
+  <div class="col-start-5">
     {{#each @evaluation.visuals as |visual|}}
       <div class="flex justify-between gap-2">
         <Token @value='=' />
@@ -33,9 +31,7 @@
     {{/each}}
   </div>
 
-  <div class="table-cell w-1/2"></div>
-
-  <div class="table-cell text-nowrap">
+  <div class="text-nowrap col-start-7">
     {{#each @evaluation.vals as |val index|}}
       <div>
         <Token @value={{get @interpreter.program.refs index}} @type='variable' />
@@ -44,15 +40,15 @@
     {{/each}}
   </div>
 
-  <div class="table-cell pb-3 px-2">
+  <div class="col-start-8">
     {{#each @evaluation.vals as |val index|}}
-      <div class="h-4 flex items-center">
+      <div class="h-4">
         <IntegerBits @number={{val}} />
       </div>
     {{/each}}
   </div>
 
-  <div class="table-cell">
+  <div class="col-start-9">
     {{#each @evaluation.vals as |val index|}}
       <div class="flex justify-between gap-2">
         <Token @value='=' />
