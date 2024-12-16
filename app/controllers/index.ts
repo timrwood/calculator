@@ -3,12 +3,13 @@ import { action } from '@ember/object'
 import type { Program } from '../models/program'
 import Evaluator from '../models/evaluator'
 import { tracked } from '@glimmer/tracking'
+import { parse } from '../models/parser'
 
 export default class IndexController extends Controller {
   queryParams = ['x', 'y']
 
-  @tracked x = undefined
-  @tracked y = undefined
+  @tracked x: number = 0
+  @tracked y: number = 0
 
   get program(): Program {
     return this.addProgram
@@ -62,10 +63,29 @@ export default class IndexController extends Controller {
   }
 
   @action setX(event: Event) {
-    this.x = ~~event.target.value
+    if (event.target instanceof HTMLInputElement) {
+      this.x = event.target.valueAsNumber
+    }
   }
 
   @action setY(event: InputEvent) {
-    this.y = ~~event.target.value
+    if (event.target instanceof HTMLInputElement) {
+      this.y = event.target.valueAsNumber
+    }
   }
 }
+
+console.log(
+  parse(`
+  args x 0
+  args y 1
+
+  start x
+    and c x y
+    xor y x y
+    shiftl x c 1
+  restart x
+
+  return y
+`),
+)
