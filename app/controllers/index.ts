@@ -1,20 +1,47 @@
 import Controller from '@ember/controller'
 import { action } from '@ember/object'
-import type { Program } from '../models/program'
-import Evaluator from '../models/evaluator'
 import { tracked } from '@glimmer/tracking'
 import { parse } from '../models/parser'
 import { interpret } from '../models/interpreter'
 import type { Interpreter } from '../models/interpreter'
 
+const SUBTRACT = `
+  args x 0
+  args y 1
+
+  start x
+    not c y
+    and c c x
+    xor y y x
+    shiftl x c 1
+  restart x
+
+  return y
+`
+
+const ADD = `
+  args x 0
+  args y 1
+
+  start x
+    and c x y
+    xor y x y
+    shiftl x c 1
+  restart x
+
+  return y
+`
+
 export default class IndexController extends Controller {
-  queryParams = ['x', 'y']
+  queryParams = ['x', 'y', 'showInterpreter']
 
   @tracked x: number = 0
   @tracked y: number = 0
+  @tracked showInterpreter: boolean = false
 
   get interpreter(): Interpreter {
-    const prog = parse(this.addSource)
+    const prog = parse(SUBTRACT)
+    console.log(prog)
     prog.args[0] = ~~(this.x ?? 0)
     prog.args[1] = ~~(this.y ?? 0)
     return interpret(prog)
@@ -26,67 +53,15 @@ export default class IndexController extends Controller {
     return [x, y]
   }
 
-  get addSource(): string {
-    return `
-      args x 0
-      args y 1
-
-      start x
-        and c x y
-        xor y x y
-        shiftl x c 1
-      restart x
-
-      return y
-    `
-  }
-
-  get addProgram(): Program {
-    return [
-      ['x', 'args', 0],
-      ['y', 'args', 1],
-      [
-        'i',
-        'loop',
-        [
-          ['c', 'and', 'x', 'y'],
-          ['y', 'xor', 'x', 'y'],
-          ['x', 'lshift', 'c', 1],
-        ],
-      ],
-      ['y', 'return'],
-    ]
-  }
-
-  get subtractProgram(): Program {
-    return [
-      ['x', 'args', 0],
-      ['y', 'args', 1],
-      [
-        'i',
-        'loop',
-        [
-          ['carry', 'not', 'x'],
-          ['carry', 'and', 'carry', 'y'],
-          ['x', 'xor', 'x', 'y'],
-          ['y', 'lshift', 'carry', 1],
-        ],
-      ],
-      ['x', 'return'],
-    ]
-  }
-
-  get evaluator(): Evaluator {
-    const evaluator = new Evaluator(this.program, this.args)
-    evaluator.evaluate()
-    return evaluator
+  @action toggleInterpreter() {
+    this.showInterpreter = !this.showInterpreter
   }
 
   @action setX(event: Event) {
-    this.x = event.target?.value
+    this.x = ~~event.target?.value
   }
 
   @action setY(event: InputEvent) {
-    this.y = event.target?.value
+    this.y = ~~event.target?.value
   }
 }

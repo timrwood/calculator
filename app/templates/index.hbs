@@ -1,10 +1,23 @@
 <div class="p-4 space-y-4">
-  <div class="flex">
-    <Input class="border-2" @value={{this.x}} {{on "input" this.setX}} />
+  <div class="flex gap-4">
+    <input class="border-2" value={{this.x}} {{on "input" this.setX}} type="number" step="1" pattern="\d+" />
     +
-    <Input class="border-2" @value={{this.y}} {{on "input" this.setY}} />
+    <input class="border-2" value={{this.y}} {{on "input" this.setY}} type="number" step="1" pattern="\d+" />
     =
     {{this.interpreter.program.retn}}
   </div>
-  <InterpreterPreview @interpreter={{this.interpreter}} />
+
+  {{#if this.showInterpreter}}
+    <div {{on "click" this.toggleInterpreter}} class="cursor-pointer text-blue-500">
+      Hide Interpreter
+    </div>
+  {{else}}
+    <div {{on "click" this.toggleInterpreter}} class="cursor-pointer text-blue-500">
+      Show Interpreter
+    </div>
+  {{/if}}
+
+  {{#if this.showInterpreter}}
+    <InterpreterPreview @interpreter={{this.interpreter}} />
+  {{/if}}
 </div>
