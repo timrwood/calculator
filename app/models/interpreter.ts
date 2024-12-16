@@ -42,12 +42,14 @@ export type EvaluationSrc = {
 export type Interpreter = {
   program: Program
   evaluations: Evaluation[]
+  runtime: string
 }
 
 type Interpretation = (evaluationSrc: EvaluationSrc) => Evaluation
 
 export function interpret(program: Program): Interpreter {
   const evaluations: Evaluation[] = []
+  const start = performance.now()
 
   while (program.step < program.cmds.length) {
     const step = program.step
@@ -65,7 +67,9 @@ export function interpret(program: Program): Interpreter {
     program.step++
   }
 
-  return { program, evaluations }
+  const runtime = (performance.now() - start).toFixed(3)
+
+  return { program, evaluations, runtime }
 }
 
 const interpreters: { [key: string]: Interpretation } = {
