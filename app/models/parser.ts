@@ -3,13 +3,15 @@ import type { RefMap, ParserError } from './parsers'
 
 import { parseCmds } from './parsers'
 
-type Program = {
+export type Program = {
   args: Int32Array
   refs: string[]
   vals: Int32Array
   jmps: Int32Array
   cmds: Cmd[]
   srcs: Src[]
+  step: number
+  retn: number
 }
 
 export function parse(data: string): Program | ParserError {
@@ -24,12 +26,14 @@ export function parse(data: string): Program | ParserError {
   }
 
   return {
-    args: new Int32Array(8),
+    args: new Int32Array([1, 2]),
     refs,
     srcs,
     cmds: cmds as Cmd[],
     jmps: new Int32Array(refs.length),
     vals: new Int32Array(refs.length),
+    step: 0,
+    retn: 0,
   }
 }
 

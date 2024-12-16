@@ -67,7 +67,7 @@ function parseNotCmd(tokens: Tokens, refs: RefMap): NotCmd | ParserError {
   if (tokens[2] === undefined) return { message: `Invalid argument 2` }
   if (tokens[3] === undefined) return { message: `Invalid argument 3` }
 
-  return ['not', convertRef(tokens[1], refs), convertRef(tokens[2], refs), convertRef(tokens[3], refs)]
+  return ['not', convertRef(tokens[1], refs), convertRef(tokens[2], refs)]
 }
 
 function parseRestartCmd(tokens: Tokens, refs: RefMap): RestartCmd | ParserError {

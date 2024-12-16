@@ -4,7 +4,7 @@ export type Src = string
 
 export type AndCmd = ['and', Ref, Ref, Ref]
 export type ArgsCmd = ['args', Ref, Val]
-export type NotCmd = ['not', Ref, Ref, Ref]
+export type NotCmd = ['not', Ref, Ref]
 export type RestartCmd = ['restart', Ref]
 export type ReturnCmd = ['return', Ref]
 export type ShiftLeftCmd = ['shiftl', Ref, Ref, Val]

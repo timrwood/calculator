@@ -4,6 +4,7 @@ import type { Program } from '../models/program'
 import Evaluator from '../models/evaluator'
 import { tracked } from '@glimmer/tracking'
 import { parse } from '../models/parser'
+import { interpret } from '../models/interpreter'
 
 export default class IndexController extends Controller {
   queryParams = ['x', 'y']
@@ -75,8 +76,7 @@ export default class IndexController extends Controller {
   }
 }
 
-console.log(
-  parse(`
+const prog = parse(`
   args x 0
   args y 1
 
@@ -87,5 +87,6 @@ console.log(
   restart x
 
   return y
-`),
-)
+`)
+
+console.log(interpret(prog))
