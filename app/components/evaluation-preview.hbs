@@ -1,8 +1,6 @@
 <div class="grid grid-cols-subgrid col-span-9 font-mono leading-4 p-6 border rounded-lg border-slate-200 gap-2 mb-2 bg-white">
   <div class="text-nowrap col-start-1">
-    {{#each this.srcTokens as |token|}}
-      <Token @value={{token.value}} @type={{token.type}} />
-    {{/each}}
+    <SrcPreview @src={{@evaluation.src}} />
   </div>
 
   <div class="col-start-3">

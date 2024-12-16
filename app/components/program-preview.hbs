@@ -1,5 +1,65 @@
-<div class="p-4 bg-slate-50 border-2 border-slate-200">
-  {{#each @program as |instruction|}}
-    <InstructionPreview @instruction={{instruction}} />
-  {{/each}}
+<div class="max-w-6xl mx-auto">
+  <div class="flex p-8 gap-4 font-mono bg-white border-2 border-slate-200 rounded-2xl items-stretch">
+    <div class="w-1/5">
+      <strong class="block pb-2">SRCS</strong>
+      <div class="bg-slate-100 border-2 rounded border-slate-200 p-6">
+        {{#each @program.srcs as |src|}}
+          <SrcPreview @src={{src}} />
+        {{/each}}
+      </div>
+    </div>
+
+    <div class="w-1/5">
+      <strong class="block pb-2">CMDS</strong>
+      <div class="bg-slate-100 border-2 rounded border-slate-200 p-6">
+        {{#each this.cmds as |cmd|}}
+          <SrcPreview @src={{cmd}} />
+        {{/each}}
+      </div>
+    </div>
+
+    <div class="w-1/5 flex flex-col">
+      <strong class="block pb-2">REFS</strong>
+      <div class="grow">
+        {{#each @program.refs as |ref index|}}
+          <div>
+            <Token @value={{index}} @type="reference" />
+            <Token @value="=" />
+            <Token @value={{ref}} @type="literal" />
+          </div>
+        {{/each}}
+      </div>
+
+      {{#each @program.vals as |val|}}
+        <IntegerBits @number={{0}} />
+      {{/each}}
+    </div>
+
+    <div class="w-1/5 flex flex-col">
+      <strong class="block pb-2">ARGS</strong>
+
+      <div class="grow">
+        {{#each @program.args as |arg index|}}
+          <div>
+            <Token @value={{index}} @type="literal" />
+            <Token @value="=" />
+            <Token @value={{arg}} @type="literal" />
+          </div>
+        {{/each}}
+      </div>
+
+      {{#each @program.args as |arg index|}}
+        <IntegerBits @number={{arg}} />
+      {{/each}}
+    </div>
+
+    <div class="w-1/5 flex flex-col">
+      <strong class="block pb-2">RETN</strong>
+      <div class="grow">
+        <Token @value={{@program.retn}} @type="literal" />
+      </div>
+
+      <IntegerBits @number={{@program.retn}} />
+    </div>
+  </div>
 </div>
