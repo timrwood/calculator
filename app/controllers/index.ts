@@ -32,6 +32,42 @@ const ADD = `
   return x
 `
 
+const MULTIPLY = `
+  args y 1
+  args x 0
+  set r 0
+
+  start y
+    set h 1
+    and h h y
+    if h 6
+      copy a x
+      start a
+        and c a r
+        xor r a r
+        shiftl a c 1
+      restart a
+    shiftl x x 1
+    shiftr y y 1
+  restart y
+
+  return r
+`
+
+// set h 1
+//   start r
+//     and c r x
+//     xor x r x
+//     shiftl r c 1
+//   restart r
+// restart y
+
+const operations: { [key: string]: string } = {
+  subtract: SUBTRACT,
+  add: ADD,
+  multiply: MULTIPLY,
+}
+
 export default class IndexController extends Controller {
   queryParams = ['x', 'y', 'showInterpreter', 'showSource', 'operation']
 
@@ -42,7 +78,7 @@ export default class IndexController extends Controller {
   @tracked showSource: boolean = false
 
   get source(): string {
-    return this.operation === 'subtract' ? SUBTRACT : ADD
+    return operations[this.operation] ?? ADD
   }
 
   get operations() {

@@ -2,10 +2,12 @@ import type {
   AndCmd,
   ArgsCmd,
   Cmd,
+  CopyCmd,
   IfCmd,
   NotCmd,
   RestartCmd,
   ReturnCmd,
+  SetCmd,
   ShiftLeftCmd,
   ShiftRightCmd,
   Src,
@@ -82,10 +84,12 @@ export function interpret(program: Program): Interpreter {
 const interpreters: { [key: string]: Interpretation } = {
   and: interpretAnd,
   args: interpretArgs,
+  copy: interpretCopy,
   if: interpretIf,
   not: interpretNot,
   restart: interpretRestart,
   return: interpretReturn,
+  set: interpretSet,
   shiftl: interpretShiftLeft,
   shiftr: interpretShiftRight,
   start: interpretStart,
@@ -126,6 +130,23 @@ function interpretArgs(evaluationSrc: EvaluationSrc): Evaluation {
   return recordEvaluation(evaluationSrc, [makeVisual(evaluationSrc, '=', cmd[1])])
 }
 
+function interpretSet(evaluationSrc: EvaluationSrc): Evaluation {
+  const cmd = evaluationSrc.cmd as SetCmd
+  evaluationSrc.vals[cmd[1]] = cmd[2]
+
+  return recordEvaluation(evaluationSrc, [makeVisual(evaluationSrc, '=', cmd[1], cmd[2])])
+}
+
+function interpretCopy(evaluationSrc: EvaluationSrc): Evaluation {
+  const cmd = evaluationSrc.cmd as CopyCmd
+  evaluationSrc.vals[cmd[1]] = evaluationSrc.vals[cmd[2]] as number
+
+  return recordEvaluation(evaluationSrc, [
+    makeVisual(evaluationSrc, 'copy', cmd[2]),
+    makeVisual(evaluationSrc, '=', cmd[1]),
+  ])
+}
+
 function interpretAnd(evaluationSrc: EvaluationSrc): Evaluation {
   const cmd = evaluationSrc.cmd as AndCmd
   const left = evaluationSrc.vals[cmd[2]] as number
@@ -133,8 +154,8 @@ function interpretAnd(evaluationSrc: EvaluationSrc): Evaluation {
   evaluationSrc.vals[cmd[1]] = left & right
 
   return recordEvaluation(evaluationSrc, [
-    makeVisual(evaluationSrc, '', cmd[1], left),
-    makeVisual(evaluationSrc, 'and', cmd[1], right),
+    makeVisual(evaluationSrc, '', cmd[2], left),
+    makeVisual(evaluationSrc, 'and', cmd[3], right),
     makeVisual(evaluationSrc, '=', cmd[1]),
   ])
 }
@@ -164,8 +185,9 @@ function interpretIf(evaluationSrc: EvaluationSrc): Evaluation {
   const program = evaluationSrc.program
   const cmd = evaluationSrc.cmd as IfCmd
   const val = evaluationSrc.vals[cmd[1]] as number
+  const skip = cmd[2]
 
-  if (!val) program.step = program.step + 1
+  if (!val) program.step = program.step + skip
 
   return recordEvaluation(evaluationSrc, [makeVisual(evaluationSrc, 'if', cmd[1])])
 }

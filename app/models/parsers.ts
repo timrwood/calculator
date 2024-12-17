@@ -3,10 +3,12 @@ import type {
   Cmd,
   ArgsCmd,
   AndCmd,
+  CopyCmd,
   IfCmd,
   NotCmd,
   RestartCmd,
   ReturnCmd,
+  SetCmd,
   ShiftLeftCmd,
   ShiftRightCmd,
   StartCmd,
@@ -34,10 +36,12 @@ export function parseCmds(srcs: Src[], refs: RefMap): CmdOrError[] {
 const parsers: { [key: string]: SrcParser } = {
   and: parseAndCmd,
   args: parseArgsCmd,
+  copy: parseCopyCmd,
   if: parseIfCmd,
   not: parseNotCmd,
   restart: parseRestartCmd,
   return: parseReturnCmd,
+  set: parseSetCmd,
   shiftl: parseShiftLeftCmd,
   shiftr: parseShiftRightCmd,
   start: parseStartCmd,
@@ -66,6 +70,20 @@ function parseAndCmd(tokens: Tokens, refs: RefMap): AndCmd | ParserError {
   return ['and', convertRef(tokens[1], refs), convertRef(tokens[2], refs), convertRef(tokens[3], refs)]
 }
 
+function parseSetCmd(tokens: Tokens, refs: RefMap): SetCmd | ParserError {
+  if (tokens[1] === undefined) return { message: `Invalid argument 1 for ${tokens[0]}` }
+  if (tokens[2] === undefined) return { message: `Invalid argument 2 for ${tokens[0]}` }
+
+  return ['set', convertRef(tokens[1], refs), parseInt(tokens[2])]
+}
+
+function parseCopyCmd(tokens: Tokens, refs: RefMap): CopyCmd | ParserError {
+  if (tokens[1] === undefined) return { message: `Invalid argument 1 for ${tokens[0]}` }
+  if (tokens[2] === undefined) return { message: `Invalid argument 2 for ${tokens[0]}` }
+
+  return ['copy', convertRef(tokens[1], refs), convertRef(tokens[2], refs)]
+}
+
 function parseNotCmd(tokens: Tokens, refs: RefMap): NotCmd | ParserError {
   if (tokens[1] === undefined) return { message: `Invalid argument 1 for ${tokens[0]}` }
   if (tokens[2] === undefined) return { message: `Invalid argument 2 for ${tokens[0]}` }
@@ -81,8 +99,9 @@ function parseRestartCmd(tokens: Tokens, refs: RefMap): RestartCmd | ParserError
 
 function parseIfCmd(tokens: Tokens, refs: RefMap): IfCmd | ParserError {
   if (tokens[1] === undefined) return { message: `Invalid argument 1 for ${tokens[0]}` }
+  if (tokens[2] === undefined) return { message: `Invalid argument 2 for ${tokens[0]}` }
 
-  return ['if', convertRef(tokens[1], refs)]
+  return ['if', convertRef(tokens[1], refs), parseInt(tokens[2])]
 }
 
 function parseReturnCmd(tokens: Tokens, refs: RefMap): ReturnCmd | ParserError {
