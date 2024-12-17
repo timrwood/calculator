@@ -71,7 +71,7 @@ export function interpret(program: Program): Interpreter {
     if (interpreter) evaluations.push(interpreter(evaluationSrc))
     program.step++
 
-    if (evaluations.length >= 200) {
+    if (evaluations.length >= 1000) {
       console.error('Interpreter exceeded 1000 evaluations')
       break
     }
@@ -239,7 +239,7 @@ function interpretShiftRight(evaluationSrc: EvaluationSrc): Evaluation {
   const cmd = evaluationSrc.cmd as ShiftRightCmd
   const left = evaluationSrc.vals[cmd[2]] as number
   const right = cmd[3]
-  evaluationSrc.vals[cmd[1]] = left >> right
+  evaluationSrc.vals[cmd[1]] = left >>> right
 
   return recordEvaluation(evaluationSrc, [
     makeVisual(evaluationSrc, '>>', cmd[2], left),
