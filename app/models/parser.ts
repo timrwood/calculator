@@ -7,7 +7,7 @@ export type Program = {
   args: Int32Array
   refs: string[]
   vals: Int32Array
-  jmps: Int32Array
+  init: Int32Array
   cmds: Cmd[]
   srcs: Src[]
   step: number
@@ -19,6 +19,7 @@ export function parse(data: string): Program | ParserError {
   const srcs = parseSrcs(data)
   const cmds = parseCmds(srcs, refMap)
   const refs = parseRefs(refMap)
+  const vals = parseVals(refs)
 
   const invalidCmds = cmds.filter(cmd => 'message' in cmd)
   if (invalidCmds.length) {
@@ -30,11 +31,23 @@ export function parse(data: string): Program | ParserError {
     refs,
     srcs,
     cmds: cmds as Cmd[],
-    jmps: new Int32Array(refs.length),
-    vals: new Int32Array(refs.length),
+    vals,
+    init: vals.slice(),
     step: 0,
     retn: 0,
   }
+}
+
+function parseVals(refs: string[]): Int32Array {
+  const vals = new Int32Array(refs.length)
+
+  refs.forEach((ref, i) => {
+    if (ref.match(/-?\d+/)) {
+      vals[i] = parseInt(ref, 10)
+    }
+  })
+
+  return vals
 }
 
 function parseSrcs(data: string): Src[] {

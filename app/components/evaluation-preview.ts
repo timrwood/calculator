@@ -21,8 +21,6 @@ export default class EvaluationPreview extends Component<EvaluationPreviewSignat
     const lineHeight = 1
     const lines = Math.max(this.args.evaluation.vals.length, this.args.evaluation.visuals.length)
     const height = padding + lines * lineHeight
-    console.log('lines', lines)
-
     return `${height}rem`
   }
 

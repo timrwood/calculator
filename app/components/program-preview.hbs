@@ -36,8 +36,8 @@
         {{/each}}
       </div>
 
-      {{#each @program.vals as |val|}}
-        <IntegerBits @number={{0}} />
+      {{#each @program.init as |val|}}
+        <IntegerBits @number={{val}} />
       {{/each}}
     </div>
 

@@ -2,16 +2,14 @@ import type {
   AndCmd,
   ArgsCmd,
   Cmd,
-  CopyCmd,
+  UnlessCmd,
   IfCmd,
   NotCmd,
-  RestartCmd,
   ReturnCmd,
   SetCmd,
   ShiftLeftCmd,
   ShiftRightCmd,
   Src,
-  StartCmd,
   XorCmd,
 } from './commands'
 import type { Program } from './parser'
@@ -85,15 +83,12 @@ export function interpret(program: Program): Interpreter {
 const interpreters: { [key: string]: Interpretation } = {
   and: interpretAnd,
   args: interpretArgs,
-  copy: interpretCopy,
   if: interpretIf,
   not: interpretNot,
-  restart: interpretRestart,
   return: interpretReturn,
   set: interpretSet,
   shiftl: interpretShiftLeft,
   shiftr: interpretShiftRight,
-  start: interpretStart,
   unless: interpretUnless,
   xor: interpretXor,
 }
@@ -127,27 +122,20 @@ function recordEvaluation(evaluationSrc: EvaluationSrc, visuals: Visual[]): Eval
 function interpretArgs(evaluationSrc: EvaluationSrc): Evaluation {
   const cmd = evaluationSrc.cmd as ArgsCmd
   const program = evaluationSrc.program
-  const val = program.args[cmd[2]] as number
+  const right = program.vals[cmd[2]] as number
+  const val = program.args[right] as number
+
   program.vals[cmd[1]] = val
 
-  return recordEvaluation(evaluationSrc, [makeVisual(evaluationSrc, '=', cmd[1])])
+  return recordEvaluation(evaluationSrc, [makeVisual(evaluationSrc, '=', val)])
 }
 
 function interpretSet(evaluationSrc: EvaluationSrc): Evaluation {
   const cmd = evaluationSrc.cmd as SetCmd
-  evaluationSrc.vals[cmd[1]] = cmd[2]
+  const val = evaluationSrc.vals[cmd[2]] as number
+  evaluationSrc.vals[cmd[1]] = val
 
-  return recordEvaluation(evaluationSrc, [makeVisual(evaluationSrc, '=', cmd[1], cmd[2])])
-}
-
-function interpretCopy(evaluationSrc: EvaluationSrc): Evaluation {
-  const cmd = evaluationSrc.cmd as CopyCmd
-  evaluationSrc.vals[cmd[1]] = evaluationSrc.vals[cmd[2]] as number
-
-  return recordEvaluation(evaluationSrc, [
-    makeVisual(evaluationSrc, 'copy', cmd[2]),
-    makeVisual(evaluationSrc, '=', cmd[1]),
-  ])
+  return recordEvaluation(evaluationSrc, [makeVisual(evaluationSrc, '=', cmd[1], val)])
 }
 
 function interpretAnd(evaluationSrc: EvaluationSrc): Evaluation {
@@ -174,21 +162,11 @@ function interpretNot(evaluationSrc: EvaluationSrc): Evaluation {
   ])
 }
 
-function interpretRestart(evaluationSrc: EvaluationSrc): Evaluation {
-  const program = evaluationSrc.program
-  const cmd = evaluationSrc.cmd as RestartCmd
-  const val = evaluationSrc.vals[cmd[1]] as number
-
-  if (val) program.step = program.jmps[cmd[1]] as number
-
-  return recordEvaluation(evaluationSrc, [makeVisual(evaluationSrc, 'restart', cmd[1])])
-}
-
 function interpretIf(evaluationSrc: EvaluationSrc): Evaluation {
   const program = evaluationSrc.program
   const cmd = evaluationSrc.cmd as IfCmd
   const val = evaluationSrc.vals[cmd[1]] as number
-  const skip = cmd[2]
+  const skip = evaluationSrc.vals[cmd[2]] as number
 
   if (val) program.step = program.step + skip
 
@@ -197,22 +175,13 @@ function interpretIf(evaluationSrc: EvaluationSrc): Evaluation {
 
 function interpretUnless(evaluationSrc: EvaluationSrc): Evaluation {
   const program = evaluationSrc.program
-  const cmd = evaluationSrc.cmd as IfCmd
+  const cmd = evaluationSrc.cmd as UnlessCmd
   const val = evaluationSrc.vals[cmd[1]] as number
-  const skip = cmd[2]
+  const skip = evaluationSrc.vals[cmd[2]] as number
 
   if (!val) program.step = program.step + skip
 
   return recordEvaluation(evaluationSrc, [makeVisual(evaluationSrc, 'unless', cmd[1])])
-}
-
-function interpretStart(evaluationSrc: EvaluationSrc): Evaluation {
-  const program = evaluationSrc.program
-  const cmd = evaluationSrc.cmd as StartCmd
-
-  program.jmps[cmd[1]] = evaluationSrc.step
-
-  return recordEvaluation(evaluationSrc, [makeVisual(evaluationSrc, 'start', cmd[1])])
 }
 
 function interpretReturn(evaluationSrc: EvaluationSrc): Evaluation {
@@ -226,7 +195,7 @@ function interpretReturn(evaluationSrc: EvaluationSrc): Evaluation {
 function interpretShiftLeft(evaluationSrc: EvaluationSrc): Evaluation {
   const cmd = evaluationSrc.cmd as ShiftLeftCmd
   const left = evaluationSrc.vals[cmd[2]] as number
-  const right = cmd[3]
+  const right = evaluationSrc.vals[cmd[3]] as number
   evaluationSrc.vals[cmd[1]] = left << right
 
   return recordEvaluation(evaluationSrc, [
@@ -238,7 +207,7 @@ function interpretShiftLeft(evaluationSrc: EvaluationSrc): Evaluation {
 function interpretShiftRight(evaluationSrc: EvaluationSrc): Evaluation {
   const cmd = evaluationSrc.cmd as ShiftRightCmd
   const left = evaluationSrc.vals[cmd[2]] as number
-  const right = cmd[3]
+  const right = evaluationSrc.vals[cmd[3]] as number
   evaluationSrc.vals[cmd[1]] = left >>> right
 
   return recordEvaluation(evaluationSrc, [
