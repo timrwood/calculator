@@ -1,10 +1,10 @@
 <div
-  class="grid grid-cols-subgrid col-span-10 font-mono leading-4 p-6 border rounded-lg border-slate-200 gap-2 mb-2 bg-white"
+  class="grid grid-cols-subgrid col-span-10 font-mono leading-4 p-6 border rounded-lg border-slate-200 gap-3 mb-2 bg-white"
   {{style height=this.height}}
   {{observe-intersection this.onIntersect}}
 >
   {{#if this.isIntersecting}}
-    <div class="col-start-1 text-right pr-1 text-slate-300">
+    <div class="col-start-1 text-right text-slate-300">
       L{{@evaluation.step}}
     </div>
 
@@ -21,7 +21,7 @@
       {{/each}}
     </div>
 
-    <div class="col-start-5">
+    <div class="col-start-5 animate-fade-in">
       {{#each @evaluation.visuals as |visual|}}
         <div class="h-4">
           <IntegerBits @number={{visual.val}} />
@@ -47,7 +47,7 @@
       {{/each}}
     </div>
 
-    <div class="col-start-9">
+    <div class="col-start-9 animate-fade-in">
       {{#each @evaluation.vals as |val index|}}
         <div class="h-4">
           <IntegerBits @number={{val}} />

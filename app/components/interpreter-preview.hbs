@@ -1,8 +1,17 @@
 <div class="grid grid-cols-[auto_auto_1fr_auto_2fr_auto_1fr_auto_2fr_auto]">
-  <div class="grid grid-cols-subgrid col-span-10 pb-4 font-bold text-center">
-    <div class="col-start-2">Operation</div>
-    <div class="col-start-5">Visualization</div>
-    <div class="col-start-9">State</div>
+  <div class="grid grid-cols-subgrid col-span-10 pb-4 px-6 gap-3 h-0 opacity-0">
+    <div class="col-start-1">{{this.maxLine}}</div>
+    <div class="col-start-2">{{this.maxCommandValue}}</div>
+    <div class="col-start-4">{{this.maxVisualsCommand}}</div>
+    <div class="col-start-6">{{this.maxVisualsValue}}</div>
+    <div class="col-start-8">{{this.maxRefValue}}</div>
+    <div class="col-start-10">{{this.maxVisualsValue}}</div>
+  </div>
+
+  <div class="grid grid-cols-subgrid col-span-10 pb-4 px-6 gap-3">
+    <div class="col-start-2 font-bold">SRC</div>
+    <div class="col-start-5 font-bold text-center">CMD</div>
+    <div class="col-start-9 font-bold text-center">VALS</div>
   </div>
 
   {{#each @interpreter.evaluations as |evaluation|}}
