@@ -9,12 +9,11 @@ const SUBTRACT = `
   args x 0
   args y 1
 
-  start y
-    not c x
-    and c c y
-    xor x x y
-    shiftl y c 1
-  restart y
+  not c x
+  and c c y
+  xor x x y
+  shiftl y c 1
+  if y -5
 
   return x
 `
@@ -23,11 +22,11 @@ const ADD = `
   args x 0
   args y 1
 
-  start y
-    and c y x
-    xor x y x
-    shiftl y c 1
-  restart y
+  and c y x
+  xor x y x
+  shiftl y c 1
+
+  if y -4
 
   return x
 `
@@ -37,19 +36,20 @@ const MULTIPLY = `
   args x 0
   set r 0
 
-  start y
-    set h 1
-    and h h y
-    if h 6
-      copy a x
-      start a
-        and c a r
-        xor r a r
-        shiftl a c 1
-      restart a
-    shiftl x x 1
-    shiftr y y 1
-  restart y
+  set h 1
+  and h h y
+
+  unless h 5
+  copy a x
+
+  and c a r
+  xor r a r
+  shiftl a c 1
+  if a -4
+
+  shiftl x x 1
+  shiftr y y 1
+  if y -11
 
   return r
 `

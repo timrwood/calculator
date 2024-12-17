@@ -12,6 +12,7 @@ import type {
   ShiftLeftCmd,
   ShiftRightCmd,
   StartCmd,
+  UnlessCmd,
   XorCmd,
 } from './commands'
 
@@ -45,6 +46,7 @@ const parsers: { [key: string]: SrcParser } = {
   shiftl: parseShiftLeftCmd,
   shiftr: parseShiftRightCmd,
   start: parseStartCmd,
+  unless: parseUnlessCmd,
   xor: parseXorCmd,
 }
 
@@ -102,6 +104,13 @@ function parseIfCmd(tokens: Tokens, refs: RefMap): IfCmd | ParserError {
   if (tokens[2] === undefined) return { message: `Invalid argument 2 for ${tokens[0]}` }
 
   return ['if', convertRef(tokens[1], refs), parseInt(tokens[2])]
+}
+
+function parseUnlessCmd(tokens: Tokens, refs: RefMap): UnlessCmd | ParserError {
+  if (tokens[1] === undefined) return { message: `Invalid argument 1 for ${tokens[0]}` }
+  if (tokens[2] === undefined) return { message: `Invalid argument 2 for ${tokens[0]}` }
+
+  return ['unless', convertRef(tokens[1], refs), parseInt(tokens[2])]
 }
 
 function parseReturnCmd(tokens: Tokens, refs: RefMap): ReturnCmd | ParserError {

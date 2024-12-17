@@ -33,6 +33,7 @@ export type Evaluation = {
   vals: Int32Array
   cmd: Cmd
   src: Src
+  step: number
 }
 
 export type EvaluationSrc = {
@@ -93,6 +94,7 @@ const interpreters: { [key: string]: Interpretation } = {
   shiftl: interpretShiftLeft,
   shiftr: interpretShiftRight,
   start: interpretStart,
+  unless: interpretUnless,
   xor: interpretXor,
 }
 
@@ -115,6 +117,7 @@ function recordEvaluation(evaluationSrc: EvaluationSrc, visuals: Visual[]): Eval
   return {
     program,
     visuals,
+    step,
     vals: program.vals.slice(),
     cmd: program.cmds[step] as Cmd,
     src: program.srcs[step] as Src,
@@ -187,9 +190,20 @@ function interpretIf(evaluationSrc: EvaluationSrc): Evaluation {
   const val = evaluationSrc.vals[cmd[1]] as number
   const skip = cmd[2]
 
-  if (!val) program.step = program.step + skip
+  if (val) program.step = program.step + skip
 
   return recordEvaluation(evaluationSrc, [makeVisual(evaluationSrc, 'if', cmd[1])])
+}
+
+function interpretUnless(evaluationSrc: EvaluationSrc): Evaluation {
+  const program = evaluationSrc.program
+  const cmd = evaluationSrc.cmd as IfCmd
+  const val = evaluationSrc.vals[cmd[1]] as number
+  const skip = cmd[2]
+
+  if (!val) program.step = program.step + skip
+
+  return recordEvaluation(evaluationSrc, [makeVisual(evaluationSrc, 'unless', cmd[1])])
 }
 
 function interpretStart(evaluationSrc: EvaluationSrc): Evaluation {

@@ -6,6 +6,7 @@ export type AndCmd = ['and', Ref, Ref, Ref]
 export type ArgsCmd = ['args', Ref, Val]
 export type CopyCmd = ['copy', Ref, Ref]
 export type IfCmd = ['if', Ref, Val]
+export type UnlessCmd = ['unless', Ref, Val]
 export type NotCmd = ['not', Ref, Ref]
 export type RestartCmd = ['restart', Ref]
 export type ReturnCmd = ['return', Ref]
@@ -27,4 +28,5 @@ export type Cmd =
   | ShiftLeftCmd
   | ShiftRightCmd
   | StartCmd
+  | UnlessCmd
   | XorCmd

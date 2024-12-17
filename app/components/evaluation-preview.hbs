@@ -1,9 +1,13 @@
-<div class="grid grid-cols-subgrid col-span-9 font-mono leading-4 p-6 border rounded-lg border-slate-200 gap-2 mb-2 bg-white">
-  <div class="text-nowrap col-start-1">
+<div class="grid grid-cols-subgrid col-span-10 font-mono leading-4 p-6 border rounded-lg border-slate-200 gap-2 mb-2 bg-white">
+  <div class="col-start-1 text-right pr-4 text-slate-400">
+    L{{@evaluation.step}}
+  </div>
+
+  <div class="text-nowrap col-start-2">
     <SrcPreview @src={{@evaluation.src}} />
   </div>
 
-  <div class="col-start-3">
+  <div class="col-start-4">
     {{#each @evaluation.visuals as |visual|}}
       <div class="text-right text-nowrap">
         <Token @value={{visual.op}} @type='operation' />
@@ -12,7 +16,7 @@
     {{/each}}
   </div>
 
-  <div class="col-start-4">
+  <div class="col-start-5">
     {{#each @evaluation.visuals as |visual|}}
       <div class="h-4">
         <IntegerBits @number={{visual.val}} />
@@ -20,7 +24,7 @@
     {{/each}}
   </div>
 
-  <div class="col-start-5">
+  <div class="col-start-6">
     {{#each @evaluation.visuals as |visual|}}
       <div class="flex justify-between gap-2">
         <Token @value='=' />
@@ -29,7 +33,7 @@
     {{/each}}
   </div>
 
-  <div class="text-nowrap col-start-7">
+  <div class="text-nowrap col-start-8">
     {{#each @evaluation.vals as |val index|}}
       <div>
         <Token @value={{get @interpreter.program.refs index}} @type='variable' />
@@ -38,7 +42,7 @@
     {{/each}}
   </div>
 
-  <div class="col-start-8">
+  <div class="col-start-9">
     {{#each @evaluation.vals as |val index|}}
       <div class="h-4">
         <IntegerBits @number={{val}} />
@@ -46,7 +50,7 @@
     {{/each}}
   </div>
 
-  <div class="col-start-9">
+  <div class="col-start-10">
     {{#each @evaluation.vals as |val index|}}
       <div class="flex justify-between gap-2">
         <Token @value='=' />
