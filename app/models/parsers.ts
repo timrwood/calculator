@@ -3,6 +3,7 @@ import type {
   Cmd,
   ArgsCmd,
   AndCmd,
+  IfCmd,
   NotCmd,
   RestartCmd,
   ReturnCmd,
@@ -33,6 +34,7 @@ export function parseCmds(srcs: Src[], refs: RefMap): CmdOrError[] {
 const parsers: { [key: string]: SrcParser } = {
   and: parseAndCmd,
   args: parseArgsCmd,
+  if: parseIfCmd,
   not: parseNotCmd,
   restart: parseRestartCmd,
   return: parseReturnCmd,
@@ -75,6 +77,12 @@ function parseRestartCmd(tokens: Tokens, refs: RefMap): RestartCmd | ParserError
   if (tokens[1] === undefined) return { message: `Invalid argument 1 for ${tokens[0]}` }
 
   return ['restart', convertRef(tokens[1], refs)]
+}
+
+function parseIfCmd(tokens: Tokens, refs: RefMap): IfCmd | ParserError {
+  if (tokens[1] === undefined) return { message: `Invalid argument 1 for ${tokens[0]}` }
+
+  return ['if', convertRef(tokens[1], refs)]
 }
 
 function parseReturnCmd(tokens: Tokens, refs: RefMap): ReturnCmd | ParserError {

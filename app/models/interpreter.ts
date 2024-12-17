@@ -2,6 +2,7 @@ import type {
   AndCmd,
   ArgsCmd,
   Cmd,
+  IfCmd,
   NotCmd,
   RestartCmd,
   ReturnCmd,
@@ -81,6 +82,7 @@ export function interpret(program: Program): Interpreter {
 const interpreters: { [key: string]: Interpretation } = {
   and: interpretAnd,
   args: interpretArgs,
+  if: interpretIf,
   not: interpretNot,
   restart: interpretRestart,
   return: interpretReturn,
@@ -156,6 +158,16 @@ function interpretRestart(evaluationSrc: EvaluationSrc): Evaluation {
   if (val) program.step = program.jmps[cmd[1]] as number
 
   return recordEvaluation(evaluationSrc, [makeVisual(evaluationSrc, 'restart', cmd[1])])
+}
+
+function interpretIf(evaluationSrc: EvaluationSrc): Evaluation {
+  const program = evaluationSrc.program
+  const cmd = evaluationSrc.cmd as IfCmd
+  const val = evaluationSrc.vals[cmd[1]] as number
+
+  if (!val) program.step = program.step + 1
+
+  return recordEvaluation(evaluationSrc, [makeVisual(evaluationSrc, 'if', cmd[1])])
 }
 
 function interpretStart(evaluationSrc: EvaluationSrc): Evaluation {
