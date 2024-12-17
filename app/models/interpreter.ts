@@ -6,6 +6,7 @@ import type {
   RestartCmd,
   ReturnCmd,
   ShiftLeftCmd,
+  ShiftRightCmd,
   Src,
   StartCmd,
   XorCmd,
@@ -65,6 +66,11 @@ export function interpret(program: Program): Interpreter {
     const interpreter = interpreters[cmd[0]]
     if (interpreter) evaluations.push(interpreter(evaluationSrc))
     program.step++
+
+    if (evaluations.length >= 200) {
+      console.error('Interpreter exceeded 1000 evaluations')
+      break
+    }
   }
 
   const runtime = (performance.now() - start).toFixed(3)
@@ -73,13 +79,14 @@ export function interpret(program: Program): Interpreter {
 }
 
 const interpreters: { [key: string]: Interpretation } = {
-  args: interpretArgs,
   and: interpretAnd,
+  args: interpretArgs,
   not: interpretNot,
   restart: interpretRestart,
-  start: interpretStart,
   return: interpretReturn,
   shiftl: interpretShiftLeft,
+  shiftr: interpretShiftRight,
+  start: interpretStart,
   xor: interpretXor,
 }
 
@@ -176,6 +183,18 @@ function interpretShiftLeft(evaluationSrc: EvaluationSrc): Evaluation {
 
   return recordEvaluation(evaluationSrc, [
     makeVisual(evaluationSrc, '<<', cmd[2], left),
+    makeVisual(evaluationSrc, '=', cmd[1]),
+  ])
+}
+
+function interpretShiftRight(evaluationSrc: EvaluationSrc): Evaluation {
+  const cmd = evaluationSrc.cmd as ShiftRightCmd
+  const left = evaluationSrc.vals[cmd[2]] as number
+  const right = cmd[3]
+  evaluationSrc.vals[cmd[1]] = left >> right
+
+  return recordEvaluation(evaluationSrc, [
+    makeVisual(evaluationSrc, '>>', cmd[2], left),
     makeVisual(evaluationSrc, '=', cmd[1]),
   ])
 }

@@ -7,6 +7,7 @@ import type {
   RestartCmd,
   ReturnCmd,
   ShiftLeftCmd,
+  ShiftRightCmd,
   StartCmd,
   XorCmd,
 } from './commands'
@@ -30,14 +31,15 @@ export function parseCmds(srcs: Src[], refs: RefMap): CmdOrError[] {
 }
 
 const parsers: { [key: string]: SrcParser } = {
-  args: parseArgsCmd,
   and: parseAndCmd,
+  args: parseArgsCmd,
   not: parseNotCmd,
-  shiftl: parseShiftLeftCmd,
-  xor: parseXorCmd,
-  return: parseReturnCmd,
-  start: parseStartCmd,
   restart: parseRestartCmd,
+  return: parseReturnCmd,
+  shiftl: parseShiftLeftCmd,
+  shiftr: parseShiftRightCmd,
+  start: parseStartCmd,
+  xor: parseXorCmd,
 }
 
 function convertRef(ref: string, refs: RefMap): number {
@@ -87,6 +89,14 @@ function parseShiftLeftCmd(tokens: Tokens, refs: RefMap): ShiftLeftCmd | ParserE
   if (tokens[3] === undefined) return { message: `Invalid argument 3 for ${tokens[0]}` }
 
   return ['shiftl', convertRef(tokens[1], refs), convertRef(tokens[2], refs), parseInt(tokens[3])]
+}
+
+function parseShiftRightCmd(tokens: Tokens, refs: RefMap): ShiftRightCmd | ParserError {
+  if (tokens[1] === undefined) return { message: `Invalid argument 1 for ${tokens[0]}` }
+  if (tokens[2] === undefined) return { message: `Invalid argument 2 for ${tokens[0]}` }
+  if (tokens[3] === undefined) return { message: `Invalid argument 3 for ${tokens[0]}` }
+
+  return ['shiftr', convertRef(tokens[1], refs), convertRef(tokens[2], refs), parseInt(tokens[3])]
 }
 
 function parseStartCmd(tokens: Tokens, refs: RefMap): StartCmd | ParserError {
