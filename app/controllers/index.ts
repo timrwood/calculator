@@ -92,7 +92,6 @@ export default class IndexController extends Controller {
 
   get interpreter(): Interpreter {
     const prog = parse(this.source)
-    console.log(prog)
     prog.args[0] = ~~(this.x ?? 0)
     prog.args[1] = ~~(this.y ?? 0)
     return interpret(prog)

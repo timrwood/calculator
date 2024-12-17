@@ -1,9 +1,12 @@
-<div class="max-w-6xl mx-auto">
+<div class="max-w-7xl mx-auto">
   <div class="flex p-8 gap-4 font-mono bg-white border-2 border-slate-200 rounded-2xl items-stretch">
     <div class="w-1/5">
       <strong class="block pb-2">SRCS</strong>
-      <div class="bg-slate-100 border-2 rounded border-slate-200 p-6">
-        {{#each @program.srcs as |src|}}
+      <div class="bg-slate-100 border-2 rounded border-slate-200 p-6 grid gap-x-3 grid-cols-[auto_1fr]">
+        {{#each @program.srcs as |src index|}}
+          <div class="col-start-1 text-right text-slate-300">
+            {{index}}
+          </div>
           <SrcPreview @src={{src}} />
         {{/each}}
       </div>
@@ -11,8 +14,11 @@
 
     <div class="w-1/5">
       <strong class="block pb-2">CMDS</strong>
-      <div class="bg-slate-100 border-2 rounded border-slate-200 p-6">
-        {{#each this.cmds as |cmd|}}
+      <div class="bg-slate-100 border-2 rounded border-slate-200 p-6 grid gap-x-3 grid-cols-[auto_1fr]">
+        {{#each this.cmds as |cmd index|}}
+          <div class="col-start-1 text-right text-slate-300">
+            {{index}}
+          </div>
           <SrcPreview @src={{cmd}} />
         {{/each}}
       </div>
