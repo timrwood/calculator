@@ -5,19 +5,33 @@
 
   <div class="flex justify-center py-32 px-8 gap-4 bg-white border-2 border-slate-200 rounded-2xl relative">
     <div class="w-72">
-      <input class="border-b-4 h-24 px-3 text-5xl w-full border-slate-200 appearance-none" value={{this.x}} {{on "input" this.setX}} type="number" pattern="\d+" />
+      <input
+        class="border-b-4 h-24 px-3 text-5xl w-full border-slate-200 outline-none focus:border-blue-400"
+        value={{this.x}}
+        {{on "input" this.setX}}
+        {{on 'blur' this.resetX}}
+      />
     </div>
 
     <div class="grid grid-cols-2 grid-rows-2 w-24 h-24 shrink-0 gap-2">
       {{#each this.operations as |operation|}}
-        <button class="border-4 border-slate-200 flex items-center justify-center text-3xl {{if (eq this.operation operation.value) 'text-slate-600 bg-slate-200' 'text-slate-200'}}" type="button" {{on "click" (fn this.setOperation operation.value)}}>
+        <button
+          class="border-4 border-slate-200 flex items-center justify-center text-3xl outline-none focus:border-blue-400 {{if (eq this.operation operation.value) 'text-slate-600 bg-slate-200' 'text-slate-200'}}"
+          type="button"
+          {{on "click" (fn this.setOperation operation.value)}}
+        >
           {{operation.label}}
         </button>
       {{/each}}
     </div>
 
     <div class="w-72">
-      <input class="border-b-4 h-24 px-3 text-5xl w-full border-slate-200 appearance-none" value={{this.y}} {{on "input" this.setY}} type="number" pattern="\d+" />
+      <input
+        class="border-b-4 h-24 px-3 text-5xl w-full border-slate-200 outline-none focus:border-blue-400"
+        value={{this.y}}
+        {{on "input" this.setY}}
+        {{on 'blur' this.resetY}}
+      />
     </div>
 
     <div class="text-nowrap text-5xl py-6 w-72">

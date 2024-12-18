@@ -8,10 +8,18 @@ import { getProgram } from '../models/programs'
 export default class IndexController extends Controller {
   queryParams = ['x', 'y', 'reveal', 'operation']
 
-  @tracked x: number = 0
-  @tracked y: number = 0
+  @tracked x: string = '0'
+  @tracked y: string = '0'
   @tracked operation: string = 'add'
   @tracked reveal: number = 0
+
+  get xNumber(): number {
+    return parseInt(this.x, 10) || 0
+  }
+
+  get yNumber(): number {
+    return parseInt(this.y, 10) || 0
+  }
 
   get operations() {
     return [
@@ -27,7 +35,7 @@ export default class IndexController extends Controller {
   }
 
   get execution(): Execution {
-    const args = [~~(this.x ?? 0), ~~(this.y ?? 0)]
+    const args = [this.xNumber, this.yNumber]
     return execute(this.program, args)
   }
 
@@ -59,13 +67,29 @@ export default class IndexController extends Controller {
     this.operation = operation
   }
 
+  sanitizeInput(input: string): string {
+    const isNegative = input.startsWith('-')
+    const sanitized = input.replace(/[^0-9]/g, '')
+    return isNegative ? `-${sanitized}` : sanitized
+  }
+
   @action setX(event: Event) {
     const target = event.target as HTMLInputElement
-    this.x = ~~target.value
+    const value = this.sanitizeInput(target.value)
+    this.x = target.value = value
+  }
+
+  @action resetX() {
+    this.x = this.xNumber.toString()
   }
 
   @action setY(event: Event) {
     const target = event.target as HTMLInputElement
-    this.y = ~~target.value
+    const value = this.sanitizeInput(target.value)
+    this.y = target.value = value
+  }
+
+  @action resetY() {
+    this.y = this.yNumber.toString()
   }
 }
