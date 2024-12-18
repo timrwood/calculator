@@ -1,5 +1,5 @@
 import Component from '@glimmer/component'
-import type { Interpreter } from '../models/interpreter'
+import type { Interpreter } from '../models/interpreter_old'
 
 export interface InterpreterPreviewSignature {
   Args: {

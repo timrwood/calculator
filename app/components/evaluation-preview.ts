@@ -1,7 +1,7 @@
 import Component from '@glimmer/component'
 import { action } from '@ember/object'
 import { tracked } from '@glimmer/tracking'
-import type { Evaluation } from '../models/interpreter'
+import type { Evaluation } from '../models/interpreter_old'
 
 export interface EvaluationPreviewSignature {
   Args: {

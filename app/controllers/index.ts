@@ -1,10 +1,9 @@
 import Controller from '@ember/controller'
 import { action } from '@ember/object'
 import { tracked } from '@glimmer/tracking'
-import { parse } from '../models/parser_old'
-import { interpret } from '../models/interpreter'
-import type { Interpreter } from '../models/interpreter'
-import operations from '../models/programs/index'
+import type { Execution, Program } from '../models/types'
+import { execute } from '../models/executor'
+import { getProgram } from '../models/programs'
 
 export default class IndexController extends Controller {
   queryParams = ['x', 'y', 'reveal', 'operation']
@@ -13,10 +12,6 @@ export default class IndexController extends Controller {
   @tracked y: number = 0
   @tracked operation: string = 'add'
   @tracked reveal: number = 0
-
-  get source(): string {
-    return operations[this.operation] ?? (operations['add'] as string)
-  }
 
   get operations() {
     return [
@@ -27,11 +22,13 @@ export default class IndexController extends Controller {
     ]
   }
 
-  get interpreter(): Interpreter {
-    const prog = parse(this.source)
-    prog.args[0] = ~~(this.x ?? 0)
-    prog.args[1] = ~~(this.y ?? 0)
-    return interpret(prog)
+  get program(): Program {
+    return getProgram(this.operation)
+  }
+
+  get execution(): Execution {
+    const args = [~~(this.x ?? 0), ~~(this.y ?? 0)]
+    return execute(this.program, args)
   }
 
   get showingSrcs() {
@@ -63,10 +60,12 @@ export default class IndexController extends Controller {
   }
 
   @action setX(event: Event) {
-    this.x = ~~event.target?.value
+    const target = event.target as HTMLInputElement
+    this.x = ~~target.value
   }
 
-  @action setY(event: InputEvent) {
-    this.y = ~~event.target?.value
+  @action setY(event: Event) {
+    const target = event.target as HTMLInputElement
+    this.y = ~~target.value
   }
 }

@@ -17,6 +17,8 @@ export type Arguments = [Reference?, Reference?]
 
 export type Tokens = string[]
 
+export type Values = number[]
+
 export type CommandAndErrors = {
   opr: Operation
   out: Reference
@@ -28,16 +30,8 @@ export type RefMap = {
   set(tokens: Tokens): void
   get(ref: string): Reference
   refs(): string[]
-  vals(): number[]
+  vals(): Values
 }
-
-export type CommandAndErrorsParser = (tokens: Tokens, refMap: RefMap) => CommandAndErrors
-
-export type CommandDef = {
-  parse: CommandAndErrorsParser
-}
-
-export type CommandMap = { [key: string]: CommandDef }
 
 export type Step = {
   src: string
@@ -52,5 +46,37 @@ export type Step = {
 export type Program = {
   stps: Step[]
   refs: string[]
-  vals: number[]
+  vals: Values
+}
+
+export type CommandAndErrorsParser = (tokens: Tokens, refMap: RefMap) => CommandAndErrors
+export type StepEvaluator = (vals: Values, args: Values, step: Step) => Evaluation
+
+export type CommandDef = {
+  parse: CommandAndErrorsParser
+  evaluate: StepEvaluator
+}
+
+export type CommandMap = { [key: string]: CommandDef }
+
+export type Visualization = {
+  cmd: string
+  ref: number
+  val: number
+}
+
+export type Evaluation = {
+  step: Step
+  vals: Values
+  vsls: Visualization[]
+  next: number
+  retn: number
+}
+
+export type Execution = {
+  prog: Program
+  args: Values
+  evls: Evaluation[]
+  retn: number
+  time: number
 }

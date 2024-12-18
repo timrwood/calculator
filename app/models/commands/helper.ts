@@ -1,6 +1,9 @@
 import type {
   Operation,
-  Reference,
+  Values,
+  Step,
+  Program,
+  Evaluation,
   Arguments,
   CommandAndErrorsParser,
   CommandAndErrors,
@@ -36,5 +39,54 @@ export function createCommandAndErrorsParser(count: number): CommandAndErrorsPar
     if (count === 2) arg = [arg0, arg1]
 
     return { opr, out, arg, err }
+  }
+}
+
+export function createTwoArgEvaluator(op: (valA: number, valB: number) => number) {
+  return function (vals: Values, _args: Values, step: Step): Evaluation {
+    const refA = step.arg[0] as number
+    const refB = step.arg[1] as number
+    const valA = vals[refA] as number
+    const valB = vals[refB] as number
+    const retn = op(valA, valB)
+
+    const vsls = [
+      { cmd: '', ref: refA, val: valA },
+      { cmd: step.opr, ref: valA, val: valB },
+      { cmd: '=', ref: step.out, val: retn },
+    ]
+
+    return { step, vals, vsls, next: step.num + 1, retn }
+  }
+}
+
+export function createOneArgEvaluator(op: (val: number) => number) {
+  return function (vals: Values, _args: Values, step: Step): Evaluation {
+    const ref = step.arg[0] as number
+    const val = vals[ref] as number
+    const retn = op(val)
+
+    const vsls = [
+      { cmd: step.opr, ref: ref, val: val },
+      { cmd: '=', ref: step.out, val: retn },
+    ]
+
+    return { step, vals, vsls, next: step.num + 1, retn }
+  }
+}
+
+export function createConditionalEvaluator(op: (val: number) => boolean) {
+  return function (vals: Values, _args: Values, step: Step): Evaluation {
+    const ref = step.arg[0] as number
+    const val = vals[ref] as number
+    const retn = vals[step.out] as number
+    const next = op(retn) ? step.num + val + 1 : step.num + 1
+
+    const vsls = [
+      { cmd: step.opr, ref: step.out, val: retn },
+      { cmd: 'jump', ref: ref, val: next },
+    ]
+
+    return { step, vals, vsls, next, retn }
   }
 }

@@ -1,6 +1,7 @@
 import type { CommandDef } from '../types'
-import { createCommandAndErrorsParser } from '../commands/helper'
+import { createCommandAndErrorsParser, createTwoArgEvaluator } from '../commands/helper'
 
 export const andDef: CommandDef = {
   parse: createCommandAndErrorsParser(2),
+  evaluate: createTwoArgEvaluator((a, b) => a & b),
 }
