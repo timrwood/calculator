@@ -127,7 +127,7 @@ function interpretArgs(evaluationSrc: EvaluationSrc): Evaluation {
 
   program.vals[cmd[1]] = val
 
-  return recordEvaluation(evaluationSrc, [makeVisual(evaluationSrc, '=', val)])
+  return recordEvaluation(evaluationSrc, [makeVisual(evaluationSrc, '=', cmd[1])])
 }
 
 function interpretSet(evaluationSrc: EvaluationSrc): Evaluation {
@@ -157,7 +157,7 @@ function interpretNot(evaluationSrc: EvaluationSrc): Evaluation {
   evaluationSrc.vals[cmd[1]] = ~before
 
   return recordEvaluation(evaluationSrc, [
-    makeVisual(evaluationSrc, 'not', cmd[2]),
+    makeVisual(evaluationSrc, 'not', cmd[2], before),
     makeVisual(evaluationSrc, '=', cmd[1]),
   ])
 }

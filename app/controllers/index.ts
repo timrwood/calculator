@@ -7,13 +7,12 @@ import type { Interpreter } from '../models/interpreter'
 import operations from '../models/programs/index'
 
 export default class IndexController extends Controller {
-  queryParams = ['x', 'y', 'showInterpreter', 'showSource', 'operation']
+  queryParams = ['x', 'y', 'reveal', 'operation']
 
   @tracked x: number = 0
   @tracked y: number = 0
   @tracked operation: string = 'add'
-  @tracked showInterpreter: boolean = false
-  @tracked showSource: boolean = false
+  @tracked reveal: number = 0
 
   get source(): string {
     return operations[this.operation] ?? (operations['add'] as string)
@@ -35,12 +34,28 @@ export default class IndexController extends Controller {
     return interpret(prog)
   }
 
-  @action toggleInterpreter() {
-    this.showInterpreter = !this.showInterpreter
+  get showingSrcs() {
+    return this.reveal >= 1
   }
 
-  @action toggleSource() {
-    this.showSource = !this.showSource
+  get showingCmds() {
+    return this.reveal >= 2
+  }
+
+  get showingArgs() {
+    return this.reveal >= 3
+  }
+
+  get showingSteps() {
+    return this.reveal >= 4
+  }
+
+  @action setReveal(reveal: number) {
+    if (this.reveal >= reveal) {
+      this.reveal = reveal - 1
+    } else {
+      this.reveal = reveal
+    }
   }
 
   @action setOperation(operation: string) {

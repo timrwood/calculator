@@ -1,0 +1,34 @@
+<div class="flex p-8 gap-4 font-mono bg-white border-2 border-slate-200 rounded-2xl items-stretch relative">
+  <div class="w-1/3">
+    <strong class="block pb-2">CMDS</strong>
+    <div class="grid gap-x-3 grid-cols-[auto_1fr]">
+      {{#each this.cmds as |cmd index|}}
+        <div class="col-start-1 text-right text-slate-300">
+          {{index}}
+        </div>
+        <SrcPreview @src={{cmd}} />
+      {{/each}}
+    </div>
+  </div>
+
+  <div class="w-1/3">
+    <strong class="block pb-2">REFS</strong>
+    <div class="grow">
+      {{#each this.refs as |ref|}}
+        <SrcPreview @src={{ref}} />
+      {{/each}}
+    </div>
+  </div>
+
+  <div class="w-1/3">
+    <strong class="block pb-2">BITS</strong>
+
+    {{#each @program.init as |val|}}
+      <div class="py-1">
+        <IntegerBits @number={{val}} />
+      </div>
+    {{/each}}
+  </div>
+
+  {{yield}}
+</div>
