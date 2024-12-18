@@ -6,6 +6,9 @@ export const divide = parse(`
 
   set q 0
 
+  if y 1
+  return 0
+
   shiftr sx x 31
   shiftr sy y 31
 
@@ -25,38 +28,56 @@ export const divide = parse(`
   shiftl a c 1
   if a -4
 
-  set m 1
-  shiftl m m 31
+  set i 15
 
-  set i m
-  set b x
-  shiftr i i 1
-  shiftr b b 1
-  if i -3
+    set c y
+    shiftl c c i
 
-  if m -7
+    xor a c x
 
-  and q q m
+    shiftr b a 1
+    or a a b
+    shiftr b a 2
+    or a a b
+    shiftr b a 4
+    or a a b
+    shiftr b a 8
+    or a a b
+    shiftr b a 16
+    or a a b
+    shiftr b a 1
+    xor a a b
+    and a a c
+
+  if a 8
+      shiftl a y i
+      not c x
+      and c c a
+      xor x x a
+      shiftl a c 1
+    if a -5
+    shiftl c 1 i
+    or q q c
+
+  unless i 7
+
+  set a 1
+  not c i
+  and c c a
+  xor i i a
+  shiftl a c 1
+  if a -5
+  if 1 -33
+
+  xor sx sx sy
+
+  unless sx 6
+  not q q
+  set a 1
+  and c a q
+  xor q a q
+  shiftl a c 1
+  if a -4
 
   return q
 `)
-
-// x / y
-
-// // Initialize the quotient
-// long long quotient = 0;
-
-//
-
-// // Iterate from most significant bit to
-// // least significant bit
-// for (int i = 31; i >= 0; --i) {
-
-//   // Check if (divisor << i) <= dividend
-//   if ((b << i) <= a) {
-//     a -= (b << i);
-//     quotient |= (1LL << i);
-//   }
-// }
-
-// return sign * quotient
