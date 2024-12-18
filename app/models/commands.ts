@@ -24,3 +24,45 @@ export type Cmd =
   | ShiftRightCmd
   | UnlessCmd
   | XorCmd
+
+import type { Tokens, RefMap, ParserError } from './parsers'
+
+import type { SrcParser } from './parsers'
+
+export type CmdDef = {
+  parse: SrcParser
+}
+
+import { andDef } from './commands/and'
+import { argsDef } from './commands/args'
+import { ifDef } from './commands/if'
+import { notDef } from './commands/not'
+import { returnDef } from './commands/return'
+import { setDef } from './commands/set'
+import { shiftlDef } from './commands/shiftl'
+import { shiftrDef } from './commands/shiftr'
+import { unlessDef } from './commands/unless'
+import { xorDef } from './commands/xor'
+
+const unknownCommand: CmdDef = {
+  parse: function (tokens: Tokens, refs: RefMap): Cmd | ParserError {
+    return { message: `Unknown command: ${tokens[0]}` }
+  },
+}
+
+const commands: { [key: string]: CmdDef } = {
+  and: andDef,
+  args: argsDef,
+  if: ifDef,
+  not: notDef,
+  return: returnDef,
+  set: setDef,
+  shiftl: shiftlDef,
+  shiftr: shiftrDef,
+  unless: unlessDef,
+  xor: xorDef,
+}
+
+export function getCommand(name: string | undefined): CmdDef {
+  return commands[name ?? 'unknown'] || unknownCommand
+}
