@@ -1,5 +1,5 @@
-<div class="p-8 py-16 space-y-8 font-mono">
-  <div class="text-4xl font-bold text-center">
+<div class="p-8 space-y-4 font-mono">
+  <div class="text-4xl font-bold text-center py-4">
     CALCULATOR
   </div>
 
@@ -45,15 +45,11 @@
     </div>
   </div>
 
-
   {{#if this.showingArgs}}
-    <ProgramArgsPreview @program={{this.interpreter.program}}>
+    <ProgramArgsPreview @interpreter={{this.interpreter}}>
       <ToggleReveal @active={{this.showingSteps}} @callback={{fn this.setReveal 4}} @name="Steps" />
     </ProgramArgsPreview>
 
-    <div class=" text-center text-slate-400">
-      Computed in {{this.interpreter.evaluations.length}} instructions in {{this.interpreter.runtime}}ms
-    </div>
   {{/if}}
 
   {{#if this.showingSteps}}

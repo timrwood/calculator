@@ -1,9 +1,20 @@
 <div class="flex p-8 gap-4 font-mono bg-white border-2 border-slate-200 rounded-2xl items-stretch relative">
+
+  <div class="w-1/4">
+    <strong class="block pb-2">&nbsp;</strong>
+
+    {{#each @interpreter.program.args as |arg|}}
+      <div class="py-1">
+        <IntegerBits @number={{arg}} />
+      </div>
+    {{/each}}
+  </div>
+
   <div class="w-1/4">
     <strong class="block pb-2">ARGS</strong>
 
     <div class="grow">
-      {{#each @program.args as |arg index|}}
+      {{#each @interpreter.program.args as |arg index|}}
         <div>
           <Token @value={{index}} @type="literal" />
           <Token @value="=" />
@@ -13,25 +24,23 @@
     </div>
   </div>
 
-  <div class="w-1/4">
-    <strong class="block pb-2">BITS</strong>
 
-    {{#each @program.args as |arg|}}
-      <div class="py-1">
-        <IntegerBits @number={{arg}} />
-      </div>
-    {{/each}}
+  <div class="w-1/4 text-center">
+    <strong class="block pb-2">EXEC</strong>
+
+    <div>{{@interpreter.evaluations.length}} instructions</div>
+    <div>{{@interpreter.runtime}}ms</div>
+  </div>
+
+  <div class="w-1/4 text-right">
+    <strong class="block pb-2">RETN</strong>
+    <Token @value={{@interpreter.program.retn}} @type="literal" />
   </div>
 
   <div class="w-1/4">
-    <strong class="block pb-2"></strong>
-    <Token @value={{@program.retn}} @type="literal" />
-  </div>
-
-  <div class="w-1/4">
-    <strong class="block pb-2">BITS</strong>
+    <strong class="block pb-2">&nbsp;</strong>
     <div class="py-1">
-      <IntegerBits @number={{@program.retn}} />
+      <IntegerBits @number={{@interpreter.program.retn}} />
     </div>
   </div>
 
