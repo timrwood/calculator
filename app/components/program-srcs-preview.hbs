@@ -1,11 +1,9 @@
 <div class="p-8 bg-white border-2 border-slate-200 rounded-2xl relative">
   <strong class="block pb-2">SRCS</strong>
   <div class="grid gap-x-3 grid-cols-[auto_1fr]">
-    {{#each @program.srcs as |src index|}}
-      <div class="col-start-1 text-right text-slate-300">
-        {{index}}
-      </div>
-      <SrcPreview @src={{src}} />
+    {{#each @execution.prog.stps as |step|}}
+      <div class="col-start-1 text-right text-slate-300">{{step.num}}</div>
+      <SrcPreview @src={{step.src}} />
     {{/each}}
   </div>
 

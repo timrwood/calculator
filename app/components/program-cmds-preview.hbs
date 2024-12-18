@@ -23,7 +23,7 @@
   <div class="w-1/3">
     <strong class="block pb-2">BITS</strong>
 
-    {{#each @program.init as |val|}}
+    {{#each @execution.prog.vals as |val|}}
       <div class="py-1">
         <IntegerBits @number={{val}} />
       </div>

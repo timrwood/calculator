@@ -22,7 +22,7 @@
 
     <div class="text-nowrap text-5xl py-6 w-72">
       =
-      {{this.interpreter.program.retn}}
+      {{this.execution.retn}}
     </div>
 
     <ToggleReveal @active={{this.showingSrcs}} @callback={{fn this.setReveal 1}} @name="Source" />
@@ -31,14 +31,14 @@
   <div class="flex gap-4">
     <div class="w-1/3">
       {{#if this.showingSrcs}}
-        <ProgramSrcsPreview @program={{this.interpreter.program}}>
+        <ProgramSrcsPreview @execution={{this.execution}}>
           <ToggleReveal @active={{this.showingCmds}} @callback={{fn this.setReveal 2}} @name="Commands" />
         </ProgramSrcsPreview>
       {{/if}}
     </div>
     <div class="w-2/3">
       {{#if this.showingCmds}}
-        <ProgramCmdsPreview @program={{this.interpreter.program}}>
+        <ProgramCmdsPreview @execution={{this.execution}}>
           <ToggleReveal @active={{this.showingArgs}} @callback={{fn this.setReveal 3}} @name="Args" />
         </ProgramCmdsPreview>
       {{/if}}
@@ -46,13 +46,13 @@
   </div>
 
   {{#if this.showingArgs}}
-    <ProgramArgsPreview @interpreter={{this.interpreter}}>
+    <ProgramArgsPreview @execution={{this.execution}}>
       <ToggleReveal @active={{this.showingSteps}} @callback={{fn this.setReveal 4}} @name="Steps" />
     </ProgramArgsPreview>
 
   {{/if}}
 
   {{#if this.showingSteps}}
-    <InterpreterPreview @interpreter={{this.interpreter}} />
+    <InterpreterPreview @execution={{this.execution}} />
   {{/if}}
 </div>

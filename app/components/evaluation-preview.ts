@@ -1,11 +1,12 @@
 import Component from '@glimmer/component'
 import { action } from '@ember/object'
 import { tracked } from '@glimmer/tracking'
-import type { Evaluation } from '../models/interpreter_old'
+import type { Evaluation, Execution } from '../models/types'
 
 export interface EvaluationPreviewSignature {
   Args: {
     evaluation: Evaluation
+    execution: Execution
   }
   Blocks: {
     default: []
@@ -19,7 +20,7 @@ export default class EvaluationPreview extends Component<EvaluationPreviewSignat
   get height() {
     const padding = 3.25
     const lineHeight = 1
-    const lines = Math.max(this.args.evaluation.vals.length, this.args.evaluation.visuals.length)
+    const lines = Math.max(this.args.evaluation.vals.length, this.args.evaluation.vsls.length)
     const height = padding + lines * lineHeight
     return `${height}rem`
   }

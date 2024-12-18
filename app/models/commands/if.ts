@@ -3,5 +3,5 @@ import { createCommandAndErrorsParser, createConditionalEvaluator } from '../com
 
 export const ifDef: CommandDef = {
   parse: createCommandAndErrorsParser(1),
-  evaluate: createConditionalEvaluator(a => a === 0),
+  evaluate: createConditionalEvaluator(a => a !== 0),
 }

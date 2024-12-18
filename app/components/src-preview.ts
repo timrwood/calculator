@@ -13,12 +13,15 @@ export interface SrcPreviewSignature {
 
 export default class SrcPreview extends Component<SrcPreviewSignature> {
   get srcTokens() {
-    return this.args.src.split(/\s+/).map((value, index) => {
-      let type = index ? 'variable' : 'operation'
-      if (value.match(/^-?[0-9]+$/)) type = 'literal'
-      if (value === '=') type = 'assignment'
+    return this.args.src
+      .trim()
+      .split(/\s+/)
+      .map((value, index) => {
+        let type = index ? 'variable' : 'operation'
+        if (value.match(/^-?[0-9]+$/)) type = 'literal'
+        if (value === '=') type = 'assignment'
 
-      return { value, type }
-    })
+        return { value, type }
+      })
   }
 }

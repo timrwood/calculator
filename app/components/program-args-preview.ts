@@ -1,9 +1,9 @@
 import Component from '@glimmer/component'
-import type { Program } from '../models/parser_old'
+import type { Execution } from '../models/types'
 
 export interface ProgramArgsPreviewSignature {
   Args: {
-    program: Program
+    execution: Execution
   }
   Blocks: {
     default: []

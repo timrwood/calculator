@@ -5,24 +5,24 @@
 >
   {{#if this.isIntersecting}}
     <div class="col-start-1 text-right text-slate-300">
-      L{{@evaluation.step}}
+      L{{@evaluation.step.num}}
     </div>
 
     <div class="text-nowrap col-start-2">
-      <SrcPreview @src={{@evaluation.src}} />
+      <SrcPreview @src={{@evaluation.step.src}} />
     </div>
 
     <div class="col-start-4">
-      {{#each @evaluation.visuals as |visual|}}
+      {{#each @evaluation.vsls as |visual|}}
         <div class="text-right text-nowrap">
-          <Token @value={{visual.op}} @type='operation' />
-          <Token @value={{visual.ref}} @type='variable' />
+          <Token @value={{visual.cmd}} @type='operation' />
+          <Token @value={{get @execution.prog.refs visual.ref}} @type='variable' />
         </div>
       {{/each}}
     </div>
 
     <div class="col-start-5 animate-fade-in">
-      {{#each @evaluation.visuals as |visual|}}
+      {{#each @evaluation.vsls as |visual|}}
         <div class="h-4">
           <IntegerBits @number={{visual.val}} />
         </div>
@@ -30,7 +30,7 @@
     </div>
 
     <div class="col-start-6">
-      {{#each @evaluation.visuals as |visual|}}
+      {{#each @evaluation.vsls as |visual|}}
         <div class="flex justify-between gap-2">
           <Token @value='=' />
           <Token @value={{visual.val}} @type='literal' />
@@ -41,8 +41,7 @@
     <div class="text-nowrap col-start-8">
       {{#each @evaluation.vals as |val index|}}
         <div class="text-right">
-          <Token @value={{get @interpreter.program.refs index}} @type='variable' />
-          <Token @value='=' />
+          <SrcPreview @src="{{get @execution.prog.refs index}} =" />
         </div>
       {{/each}}
     </div>

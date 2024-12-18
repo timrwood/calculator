@@ -1,9 +1,9 @@
 import Component from '@glimmer/component'
-import type { Program } from '../models/parser_old'
+import type { Execution, Step } from '../models/types'
 
 export interface ProgramPreviewSignature {
   Args: {
-    program: Program
+    execution: Execution
   }
   Blocks: {
     default: []
@@ -13,10 +13,12 @@ export interface ProgramPreviewSignature {
 
 export default class ProgramPreview extends Component<ProgramPreviewSignature> {
   get cmds() {
-    return this.args.program.cmds.map(cmd => cmd.join(' '))
+    return this.args.execution.prog.stps.map((step: Step) => {
+      return [step.opr, step.out, ...step.arg].join(' ')
+    })
   }
 
   get refs() {
-    return this.args.program.refs.map((ref, i) => `${i} = ${ref}`)
+    return this.args.execution.prog.refs.map((ref, i) => `${i} = ${ref}`)
   }
 }

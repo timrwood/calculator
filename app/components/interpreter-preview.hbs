@@ -14,7 +14,7 @@
     <div class="col-start-9 font-bold text-center">VALS</div>
   </div>
 
-  {{#each @interpreter.evaluations as |evaluation|}}
-    <EvaluationPreview @evaluation={{evaluation}} @interpreter={{@interpreter}} />
+  {{#each this.evls as |evaluation|}}
+    <EvaluationPreview @execution={{@execution}} @evaluation={{evaluation}} />
   {{/each}}
 </div>

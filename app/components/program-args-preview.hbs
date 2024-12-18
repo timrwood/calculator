@@ -3,7 +3,7 @@
   <div class="w-1/4">
     <strong class="block pb-2">&nbsp;</strong>
 
-    {{#each @interpreter.program.args as |arg|}}
+    {{#each @execution.args as |arg|}}
       <div class="py-1">
         <IntegerBits @number={{arg}} />
       </div>
@@ -14,7 +14,7 @@
     <strong class="block pb-2">ARGS</strong>
 
     <div class="grow">
-      {{#each @interpreter.program.args as |arg index|}}
+      {{#each @execution.args as |arg index|}}
         <div>
           <Token @value={{index}} @type="literal" />
           <Token @value="=" />
@@ -28,19 +28,19 @@
   <div class="w-1/4 text-center">
     <strong class="block pb-2">EXEC</strong>
 
-    <div>{{@interpreter.evaluations.length}} instructions</div>
-    <div>{{@interpreter.runtime}}ms</div>
+    <div>{{@execution.evls.length}} instructions</div>
+    <div>{{@execution.time}}ms</div>
   </div>
 
   <div class="w-1/4 text-right">
     <strong class="block pb-2">RETN</strong>
-    <Token @value={{@interpreter.program.retn}} @type="literal" />
+    <Token @value={{@execution.retn}} @type="literal" />
   </div>
 
   <div class="w-1/4">
     <strong class="block pb-2">&nbsp;</strong>
     <div class="py-1">
-      <IntegerBits @number={{@interpreter.program.retn}} />
+      <IntegerBits @number={{@execution.retn}} />
     </div>
   </div>
 

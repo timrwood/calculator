@@ -12,5 +12,3 @@ export const add = parse(`
 
   return x
 `)
-
-console.log(add)

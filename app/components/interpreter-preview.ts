@@ -1,9 +1,9 @@
 import Component from '@glimmer/component'
-import type { Interpreter } from '../models/interpreter_old'
+import type { Execution } from '../models/types'
 
 export interface InterpreterPreviewSignature {
   Args: {
-    interpreter: Interpreter
+    execution: Execution
   }
   Blocks: {
     default: []
@@ -23,31 +23,31 @@ function longestString(strings: string[]) {
 }
 
 export default class InterpreterPreview extends Component<InterpreterPreviewSignature> {
+  get evls() {
+    return this.args.execution.evls
+  }
+
+  get vsls() {
+    return this.evls.flatMap(evl => evl.vsls)
+  }
+
   get maxLine() {
-    return longestString(this.args.interpreter.evaluations.map(evaluation => `L${evaluation.step}`))
+    return longestString(this.evls.map(evl => `L${evl.step.num}`))
   }
 
   get maxVisualsCommand() {
-    const strings = this.args.interpreter.evaluations
-      .flatMap(evaluation => evaluation.visuals)
-      .map(visual => `${visual.op} ${visual.ref}`)
-    return longestString(strings)
+    return longestString(this.vsls.map(vis => `${vis.cmd} ${vis.ref}`))
   }
 
   get maxVisualsValue() {
-    const strings = this.args.interpreter.evaluations
-      .flatMap(evaluation => evaluation.visuals)
-      .map(visual => `= ${visual.val}`)
-    return longestString(strings)
+    return longestString(this.vsls.map(vis => `= ${vis.val}`))
   }
 
   get maxCommandValue() {
-    const strings = this.args.interpreter.evaluations.map(evaluation => evaluation.src)
-    return longestString(strings)
+    return longestString(this.evls.map(evl => evl.step.src))
   }
 
   get maxRefValue() {
-    const strings = this.args.interpreter.program.refs.map(ref => `${ref} = `)
-    return longestString(strings)
+    return longestString(this.args.execution.prog.refs.map(ref => `${ref} = `))
   }
 }
