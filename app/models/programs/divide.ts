@@ -1,4 +1,6 @@
-export default `
+import { parse } from '../parser'
+
+export const divide = parse(`
   args x 0
   args y 1
 
@@ -39,7 +41,7 @@ export default `
 
 
   return q
-`
+`)
 
 // x / y
 

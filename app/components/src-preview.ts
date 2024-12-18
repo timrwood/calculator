@@ -1,5 +1,5 @@
 import Component from '@glimmer/component'
-import type { Src } from '../models/commands'
+import type { Src } from '../models/commands_old'
 
 export interface SrcPreviewSignature {
   Args: {

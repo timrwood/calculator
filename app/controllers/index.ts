@@ -1,7 +1,7 @@
 import Controller from '@ember/controller'
 import { action } from '@ember/object'
 import { tracked } from '@glimmer/tracking'
-import { parse } from '../models/parser'
+import { parse } from '../models/parser_old'
 import { interpret } from '../models/interpreter'
 import type { Interpreter } from '../models/interpreter'
 import operations from '../models/programs/index'

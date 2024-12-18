@@ -1,6 +1,6 @@
-import type { Src, Cmd } from './commands'
+import type { Src, Cmd } from './commands_old'
 
-import { getCommand } from './commands'
+import { getCommand } from './commands_old'
 
 export type RefMap = { [key: string]: number }
 

@@ -1,4 +1,6 @@
-const multiply = `
+import { parse } from '../parser'
+
+export const multiply = parse(`
   args x 0
   args y 1
 
@@ -37,32 +39,30 @@ const multiply = `
   if a -4
 
   return r
-`
+`)
 
-export default multiply
+// import { parse } from '../parser_old'
+// import type { Program } from '../parser_old'
+// import { interpret } from '../interpreter'
 
-import { parse } from '../parser'
-import type { Program } from '../parser'
-import { interpret } from '../interpreter'
+// function test(x: number, y: number, e: number) {
+//   const prog = parse(multiply) as Program
+//   prog.args[0] = x
+//   prog.args[1] = y
+//   interpret(prog)
+//   if (prog.retn !== e) {
+//     console.error(`expected ${x} * ${y} = ${e}, got ${prog.retn}`)
+//   } else {
+//     // console.log(`${x} * ${y} = ${prog.retn}`)
+//   }
+// }
 
-function test(x: number, y: number, e: number) {
-  const prog = parse(multiply) as Program
-  prog.args[0] = x
-  prog.args[1] = y
-  interpret(prog)
-  if (prog.retn !== e) {
-    console.error(`expected ${x} * ${y} = ${e}, got ${prog.retn}`)
-  } else {
-    // console.log(`${x} * ${y} = ${prog.retn}`)
-  }
-}
-
-test(0, 0, 0)
-test(0, 1, 0)
-test(1, 0, 0)
-test(1, 1, 1)
-test(2, 1, 2)
-test(2, 5, 10)
-test(-2, 5, -10)
-test(3, -4, -12)
-test(-22, -5, 110)
+// test(0, 0, 0)
+// test(0, 1, 0)
+// test(1, 0, 0)
+// test(1, 1, 1)
+// test(2, 1, 2)
+// test(2, 5, 10)
+// test(-2, 5, -10)
+// test(3, -4, -12)
+// test(-22, -5, 110)

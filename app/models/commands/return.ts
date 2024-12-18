@@ -1,11 +1,6 @@
-import type { CmdDef, Cmd } from '../commands'
-import type { Tokens, RefMap, ParserError } from '../parsers'
-import { convertRef } from '../parsers'
+import type { CommandDef } from '../types'
+import { createCommandAndErrorsParser } from '../commands/helper'
 
-export const returnDef: CmdDef = {
-  parse: function (tokens: Tokens, refs: RefMap): Cmd | ParserError {
-    if (tokens[1] === undefined) return { message: `Invalid argument 1 for ${tokens[0]}` }
-
-    return ['return', convertRef(tokens[1], refs)]
-  },
+export const returnDef: CommandDef = {
+  parse: createCommandAndErrorsParser(0),
 }

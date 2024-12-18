@@ -11,8 +11,8 @@ import type {
   ShiftRightCmd,
   Src,
   XorCmd,
-} from './commands'
-import type { Program } from './parser'
+} from './commands_old'
+import type { Program } from './parser_old'
 
 type VisualSource = {
   op: string

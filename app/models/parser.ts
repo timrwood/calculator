@@ -1,66 +1,26 @@
-import type { Cmd, Src } from './commands'
-import type { RefMap, ParserError } from './parsers'
+import type { Program, Tokens } from './types'
 
-import { parseCmds } from './parsers'
+import { buildRefMap } from './ref_map'
+import { getCommand } from './commands'
 
-export type Program = {
-  args: Int32Array
-  refs: string[]
-  vals: Int32Array
-  init: Int32Array
-  cmds: Cmd[]
-  srcs: Src[]
-  step: number
-  retn: number
+function tokenize(src: string): Tokens {
+  return src.trim().split(/\s+/)
 }
 
-export function parse(data: string): Program | ParserError {
-  const refMap: RefMap = {}
-  const srcs = parseSrcs(data)
-  const cmds = parseCmds(srcs, refMap)
-  const refs = parseRefs(refMap)
-  const vals = parseVals(refs)
+export function parse(src: string): Program {
+  const srcLines = src.split('\n').filter(line => line.trim())
+  const refMap = buildRefMap()
 
-  const invalidCmds = cmds.filter(cmd => 'message' in cmd)
-  if (invalidCmds.length) {
-    return invalidCmds[0] as ParserError
-  }
+  srcLines.forEach(srcLine => refMap.set(tokenize(srcLine)))
 
-  return {
-    args: new Int32Array([1, 2]),
-    refs,
-    srcs,
-    cmds: cmds as Cmd[],
-    vals,
-    init: vals.slice(),
-    step: 0,
-    retn: 0,
-  }
-}
-
-function parseVals(refs: string[]): Int32Array {
-  const vals = new Int32Array(refs.length)
-
-  refs.forEach((ref, i) => {
-    if (ref.match(/-?\d+/)) {
-      vals[i] = parseInt(ref, 10)
-    }
+  const stps = srcLines.map((src, num) => {
+    const tok = tokenize(src)
+    const { opr, out, arg, err } = getCommand(tok[0]).parse(tok, refMap)
+    return { src, tok, num, opr, out, arg, err }
   })
 
-  return vals
-}
+  const refs = refMap.refs()
+  const vals = refMap.vals()
 
-function parseSrcs(data: string): Src[] {
-  return data
-    .split('\n')
-    .map(line => line.trim())
-    .filter(line => line)
-}
-
-function parseRefs(refMap: RefMap): string[] {
-  const refs: string[] = []
-  Object.entries(refMap).forEach(([ref, index]) => {
-    refs[index] = ref
-  })
-  return refs
+  return { stps, refs, vals }
 }
