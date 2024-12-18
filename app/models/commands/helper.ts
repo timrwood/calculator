@@ -28,11 +28,11 @@ export function createCommandAndErrorsParser(count: number): CommandAndErrorsPar
     const arg0 = refMap.get(tok2 ?? '')
     const arg1 = refMap.get(tok3 ?? '')
 
-    if (out === undefined) err.push(`Missing output for ${opr}`)
-    if (tok2 === undefined && count >= 1) err.push(`Missing argument 0 for ${opr}`)
-    if (tok3 === undefined && count >= 2) err.push(`Missing argument 1 for ${opr}`)
+    if (out === undefined) err.push(`Missing output`)
+    if (tok2 === undefined && count >= 1) err.push(`Missing argument 0`)
+    if (tok3 === undefined && count >= 2) err.push(`Missing argument 1`)
 
-    if (tok.length - count > 2) err.push(`Too many arguments for ${opr}`)
+    if (tok.length - count > 2) err.push(`Too many arguments`)
 
     let arg: Arguments = []
     if (count === 1) arg = [arg0]

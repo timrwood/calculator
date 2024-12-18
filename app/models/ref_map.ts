@@ -1,7 +1,16 @@
 import type { RefMap, Tokens, Reference } from './types'
 
+const isNumberRegex = /^-?\d+$/
+
 function compare(a: string, b: string) {
-  return a > b ? 1 : a < b ? -1 : 0
+  const intA = parseInt(a, 10)
+  const intB = parseInt(b, 10)
+  const compareIsNumber = ~~isNumberRegex.test(a) - ~~isNumberRegex.test(b)
+  const compareSign = Math.sign(intB + 1) - Math.sign(intA + 1)
+  const compareNumber = Math.abs(intA) - Math.abs(intB)
+  const compareStrings = a.localeCompare(b)
+
+  return compareIsNumber || compareSign || compareNumber || compareStrings
 }
 
 function val(string: string) {

@@ -1,7 +1,7 @@
 import { parse } from '../parser'
 
 export const add = parse(`
-  args x 0 0
+  args x 0
   args y 1
 
   and c y x
