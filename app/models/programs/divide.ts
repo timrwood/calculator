@@ -25,12 +25,11 @@ export const divide = parse(`
   shiftl a c 1
   if a -4
 
-
   set m 1
   shiftl m m 31
 
-  copy i m
-  copy b x
+  set i m
+  set b x
   shiftr i i 1
   shiftr b b 1
   if i -3
@@ -38,7 +37,6 @@ export const divide = parse(`
   if m -7
 
   and q q m
-
 
   return q
 `)

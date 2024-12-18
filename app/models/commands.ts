@@ -4,6 +4,7 @@ import { unknownDef } from './commands/unknown'
 import { andDef } from './commands/and'
 import { argsDef } from './commands/args'
 import { ifDef } from './commands/if'
+import { orDef } from './commands/or'
 import { notDef } from './commands/not'
 import { returnDef } from './commands/return'
 import { setDef } from './commands/set'
@@ -17,6 +18,7 @@ const commands: CommandMap = {
   args: argsDef,
   if: ifDef,
   not: notDef,
+  or: orDef,
   return: returnDef,
   set: setDef,
   shiftl: shiftlDef,

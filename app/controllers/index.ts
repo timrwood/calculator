@@ -19,6 +19,7 @@ export default class IndexController extends Controller {
       { label: '-', value: 'subtract' },
       { label: '×', value: 'multiply' },
       { label: '÷', value: 'divide' },
+      { label: '<', value: 'lessThan' },
     ]
   }
 

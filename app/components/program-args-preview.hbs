@@ -29,7 +29,7 @@
     <strong class="block pb-2">EXEC</strong>
 
     <div>{{@execution.evls.length}} instructions</div>
-    <div>{{@execution.time}}ms</div>
+    <div>{{to-fixed @execution.time 4}}ms</div>
   </div>
 
   <div class="w-1/4 text-right">

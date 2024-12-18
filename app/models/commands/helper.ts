@@ -17,7 +17,7 @@ export function tokenize(src: string): Tokens {
 
 export function createCommandAndErrorsParser(count: number): CommandAndErrorsParser {
   return function (tok: Tokens, refMap: RefMap): CommandAndErrors {
-    let err: string[] = []
+    const err: string[] = []
 
     const opr = tok[0] as Operation
     const tok1 = tok[1]
@@ -52,7 +52,7 @@ export function createTwoArgEvaluator(op: (valA: number, valB: number) => number
 
     const vsls = [
       { cmd: '', ref: refA, val: valA },
-      { cmd: step.opr, ref: valA, val: valB },
+      { cmd: step.opr, ref: refB, val: valB },
       { cmd: '=', ref: step.out, val: retn },
     ]
 
